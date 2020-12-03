@@ -11,6 +11,19 @@ rebase::~rebase() {
     git_rebase_free(c_ptr_);
 }
 
+rebase::rebase(rebase&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+rebase& rebase::operator=(rebase&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void rebase::abort() {
   if (git_rebase_abort(c_ptr_))
     throw git_exception();

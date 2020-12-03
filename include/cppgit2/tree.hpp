@@ -24,6 +24,12 @@ public:
   // Cleanup
   ~tree();
 
+  // Move constructor (appropriate other's c_ptr_)
+  tree(tree&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  tree& operator= (tree&& other);
+
   class entry : public libgit2_api {
   public:
     // Default construction
@@ -103,6 +109,9 @@ public:
 
   // Duplicate of tree
   tree copy() const;
+
+  // Copy constructor
+  tree(tree const& other);
 
   // Lookup tree entry by SHA value
   // Returned entry is owned by the tree

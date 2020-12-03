@@ -16,6 +16,12 @@ public:
   config(git_config *c_ptr, ownership owner = ownership::libgit2);
   ~config();
 
+  // Move constructor (appropriate other's c_ptr_)
+  config(config&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  config& operator= (config&& other);
+
   // Priority levels correspond to natural escalation logic
   // when searching for config entries in git
   enum class priority_level {

@@ -15,6 +15,19 @@ revwalk::~revwalk() {
     git_revwalk_free(c_ptr_);
 }
 
+revwalk::revwalk(revwalk&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+revwalk& revwalk::operator=(revwalk&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void revwalk::add_hide_callback(std::function<int(const oid &)> callback) {
   struct visitor_wrapper {
     std::function<int(const oid &)> fn;

@@ -43,6 +43,12 @@ public:
   // Cleanup patch object
   ~patch();
 
+  // Move constructor (appropriate other's c_ptr_)
+  patch(patch&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  patch& operator= (patch&& other);
+
   // Get the delta associated with a patch.
   // This delta points to internal data, owned by libgit2
   diff::delta delta() const;

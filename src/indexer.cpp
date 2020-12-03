@@ -17,6 +17,19 @@ indexer::~indexer() {
     git_indexer_free(c_ptr_);
 }
 
+indexer::indexer(indexer&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+indexer& indexer::operator=(indexer&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void indexer::append(void *data, size_t size) {
   if (git_indexer_append(c_ptr_, data, size,
                          const_cast<git_indexer_progress *>(progress_.c_ptr_)))

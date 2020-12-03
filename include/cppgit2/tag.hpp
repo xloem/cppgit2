@@ -20,8 +20,17 @@ public:
   // Cleanup tag ptr
   ~tag();
 
+  // Move constructor (appropriate other's c_ptr_)
+  tag(tag&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  tag& operator= (tag&& other);
+
   // Create an in-memory copy of a tag
   tag copy() const;
+
+  // Copy constructor
+  tag(tag const& other);
 
   // Id of the tag
   oid id() const;

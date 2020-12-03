@@ -22,6 +22,12 @@ public:
   // Free git_treebuilder c_ptr_
   ~tree_builder();
 
+  // Move constructor (appropriate other's c_ptr_)
+  tree_builder(tree_builder&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  tree_builder& operator= (tree_builder&& other);
+
   // Clear all the entires in the builder
   void clear();
 

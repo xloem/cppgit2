@@ -47,6 +47,12 @@ public:
   // Cleanup credential object
   ~credential();
 
+  // Move constructor (appropriate other's c_ptr_)
+  credential(credential&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  credential& operator= (credential&& other);
+
   // Supported credential types
   // This represents the various types of authentication methods supported by
   // the library.

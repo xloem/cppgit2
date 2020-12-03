@@ -37,9 +37,11 @@ int oid::compare(const oid &rhs, size_t length) const {
 }
 
 oid oid::copy() const {
-  oid result;
-  git_oid_cpy(&result.c_struct_, &c_struct_);
-  return result;
+  return *this;
+}
+
+oid::oid(oid const& other) {
+  git_oid_cpy(&c_struct_, &other.c_struct_);
 }
 
 bool oid::is_zero() const { return git_oid_iszero(&c_struct_); }

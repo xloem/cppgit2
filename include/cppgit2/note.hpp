@@ -14,6 +14,12 @@ public:
   note(git_note *c_ptr, ownership owner = ownership::libgit2);
   ~note();
 
+  // Move constructor (appropriate other's c_ptr_)
+  note(note&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  note& operator= (note&& other);
+
   // Get the note author
   signature author() const;
 

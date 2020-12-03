@@ -11,6 +11,19 @@ refspec::~refspec() {
     git_refspec_free(c_ptr_);
 }
 
+refspec::refspec(refspec&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+refspec& refspec::operator=(refspec&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 connection_direction refspec::direction() const {
   return static_cast<connection_direction>(git_refspec_direction(c_ptr_));
 }

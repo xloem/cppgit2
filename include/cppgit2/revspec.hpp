@@ -20,10 +20,10 @@ public:
   }
 
   // The left element of the revspec; must be freed by the user
-  object from() const { return from_; }
+  object const& from() const { return from_; }
 
   // The right element of the revspec; must be freed by the user
-  object to() const { return to_; }
+  object const& to() const { return to_; }
 
   revparse::mode flags() const {
     return static_cast<revparse::mode>(c_ptr_->flags);

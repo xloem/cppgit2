@@ -1,4 +1,5 @@
 #include <cppgit2/data_buffer.hpp>
+#include <cstring>
 
 namespace cppgit2 {
 
@@ -31,6 +32,27 @@ data_buffer::data_buffer(const git_buf *c_ptr) {
 data_buffer::~data_buffer() {
   if (c_struct_.size)
     git_buf_dispose(&c_struct_);
+}
+
+data_buffer::data_buffer(data_buffer&& other) {
+  c_struct_.size = other.c_struct_.size;
+  c_struct_.ptr = other.c_struct_.ptr;
+  c_struct_.asize = other.c_struct_.asize;
+  other.c_struct_.size = 0;
+  other.c_struct_.asize = 0;
+  other.c_struct_.ptr = nullptr;
+}
+
+data_buffer& data_buffer::operator= (data_buffer&& other) {
+  if (other.c_struct_.ptr != c_struct_.ptr) {
+    c_struct_.size = other.c_struct_.size;
+    c_struct_.ptr = other.c_struct_.ptr;
+    c_struct_.asize = other.c_struct_.asize;
+    other.c_struct_.size = 0;
+    other.c_struct_.asize = 0;
+    other.c_struct_.ptr = nullptr;
+  }
+  return *this;
 }
 
 bool data_buffer::contains_nul() const {

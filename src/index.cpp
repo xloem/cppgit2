@@ -15,6 +15,19 @@ index::~index() {
     git_index_free(c_ptr_);
 }
 
+index::index(index&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+index& index::operator=(index&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void index::add_entry(const entry &source_entry) {
   if (git_index_add(c_ptr_, source_entry.c_ptr()))
     throw git_exception();

@@ -35,6 +35,12 @@ public:
   // Free if owned by user
   ~diff();
 
+  // Move constructor (appropriate other's c_ptr_)
+  diff(diff&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  diff& operator= (diff&& other);
+
   class delta : public libgit2_api {
   public:
     delta() {}

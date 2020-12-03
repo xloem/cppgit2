@@ -12,15 +12,30 @@ reference::~reference() {
     git_reference_free(c_ptr_);
 }
 
+reference::reference(reference&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+reference& reference::operator=(reference&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 int reference::compare(const reference &rhs) const {
   return git_reference_cmp(c_ptr_, rhs.c_ptr());
 }
 
 reference reference::copy() const {
-  reference result(nullptr, ownership::user);
-  if (git_reference_dup(&result.c_ptr_, c_ptr_))
+  return *this;
+}
+
+reference::reference(reference const& other) : owner_(ownership::user){
+  if (git_reference_dup(&c_ptr_, other.c_ptr_))
     throw git_exception();
-  return result;
 }
 
 void reference::delete_reference(reference &ref) {

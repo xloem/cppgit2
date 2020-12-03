@@ -30,6 +30,12 @@ public:
   // Free index object if owned by user
   ~index();
 
+  // Move constructor (appropriate other's c_ptr_)
+  index(index&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  index& operator= (index&& other);
+
   // Time structure used in a git index entry
   struct time {
     int32_t seconds;

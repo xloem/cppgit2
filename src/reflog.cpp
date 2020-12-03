@@ -12,6 +12,19 @@ reflog::~reflog() {
     git_reflog_free(c_ptr_);
 }
 
+reflog::reflog(reflog&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+reflog& reflog::operator=(reflog&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void reflog::remove(size_t index, bool rewrite_previous_entry) {
   if (git_reflog_drop(c_ptr_, index, rewrite_previous_entry))
     throw git_exception();

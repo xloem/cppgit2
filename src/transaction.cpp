@@ -12,6 +12,19 @@ transaction::~transaction() {
     git_transaction_free(c_ptr_);
 }
 
+transaction::transaction(transaction&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+transaction& transaction::operator=(transaction&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void transaction::commit() {
   if (git_transaction_commit(c_ptr_))
     throw git_exception();

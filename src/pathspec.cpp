@@ -11,6 +11,19 @@ pathspec::~pathspec() {
     git_pathspec_free(c_ptr_);
 }
 
+pathspec::pathspec(pathspec&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+pathspec& pathspec::operator=(pathspec&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 pathspec pathspec::compile(const strarray &paths) {
   pathspec result(nullptr, ownership::user);
   if (git_pathspec_new(&result.c_ptr_, paths.c_ptr()))

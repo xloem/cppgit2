@@ -49,6 +49,18 @@ credential::~credential() {
     git_credential_free(c_ptr_);
 }
 
+credential::credential(credential&& other) : c_ptr_(other.c_ptr_) {
+  other.c_ptr_ = nullptr;
+}
+
+credential& credential::operator=(credential&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 std::string credential::username() const {
   auto ret = git_credential_get_username(c_ptr_);
   return ret ? std::string(ret) : "";

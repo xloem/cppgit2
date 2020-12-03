@@ -14,13 +14,27 @@ blob::~blob() {
     git_blob_free(c_ptr_);
 }
 
+blob::blob(blob&& other) : c_ptr_(other.c_ptr_) {
+  other.c_ptr_ = nullptr;
+}
+
+blob& blob::operator=(blob&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 repository blob::owner() const { return repository(git_blob_owner(c_ptr_)); }
 
 blob blob::copy() const {
-  blob result;
-  if (git_blob_dup(&result.c_ptr_, c_ptr_))
+  return *this;
+}
+
+blob::blob(blob const& other) {
+  if (git_blob_dup(&c_ptr_, other.c_ptr_))
     throw git_exception();
-  return result;
 }
 
 oid blob::id() const { return oid(git_blob_id(c_ptr_)); }

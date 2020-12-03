@@ -17,6 +17,19 @@ diff::~diff() {
     git_diff_free(c_ptr_);
 }
 
+diff::diff(diff&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+diff& diff::operator=(diff&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 diff::delta diff::compare_files(const std::pair<blob, std::string> &old_file,
                                 const std::pair<blob, std::string> &new_file,
                                 diff::options options) {

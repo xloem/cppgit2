@@ -22,6 +22,12 @@ public:
   // Free rebase object if owned by user
   ~rebase();
 
+  // Move constructor (appropriate other's c_ptr_)
+  rebase(rebase&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  rebase& operator= (rebase&& other);
+
   // A rebase operation
   // Describes a single instruction/operation to be performed during the
   // rebase.

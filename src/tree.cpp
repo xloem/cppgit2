@@ -12,6 +12,19 @@ tree::~tree() {
     git_tree_free(c_ptr_);
 }
 
+tree::tree(tree&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+tree& tree::operator=(tree&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 tree::entry tree::lookup_entry_by_id(const oid &id) const {
   return tree::entry(
       const_cast<git_tree_entry *>(git_tree_entry_byid(c_ptr_, id.c_ptr())));
@@ -38,10 +51,12 @@ tree::entry tree::lookup_entry_by_path(const std::string &path) const {
 oid tree::id() const { return oid(git_tree_id(c_ptr_)); }
 
 tree tree::copy() const {
-  tree result(nullptr, ownership::user);
-  if (git_tree_dup(&result.c_ptr_, c_ptr_))
+  return *this;
+}
+
+tree::tree(tree const& other) : owner_(ownership::user){
+  if (git_tree_dup(&c_ptr_, other.c_ptr_))
     throw git_exception();
-  return result;
 }
 
 size_t tree::size() const { return git_tree_entrycount(c_ptr_); }

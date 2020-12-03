@@ -11,6 +11,19 @@ remote::~remote() {
     git_remote_free(c_ptr_);
 }
 
+remote::remote(remote&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+remote& remote::operator=(remote&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 fetch::options::autotag remote::autotag_option() {
   return static_cast<fetch::options::autotag>(git_remote_autotag(c_ptr_));
 }
@@ -36,10 +49,12 @@ void remote::create_options::set_repository(const cppgit2::repository &repo) {
 }
 
 remote remote::copy() const {
-  remote result(nullptr, ownership::user);
-  if (git_remote_dup(&result.c_ptr_, c_ptr_))
+  return *this;
+}
+
+remote::remote(remote const& other) : owner_(ownership::user){
+  if (git_remote_dup(&c_ptr_, other.c_ptr_))
     throw git_exception();
-  return result;
 }
 
 remote remote::create_detached_remote(const std::string &url) {

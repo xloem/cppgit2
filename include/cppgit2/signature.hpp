@@ -40,6 +40,9 @@ public:
   // Duplicate this signature
   signature copy() const;
 
+  // Copy constructor
+  signature(signature const& other);
+
   // Getters
   std::string name() const;
   std::string email() const;

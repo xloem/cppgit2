@@ -13,6 +13,19 @@ pack_builder::~pack_builder() {
     git_packbuilder_free(c_ptr_);
 }
 
+pack_builder::pack_builder(pack_builder&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+pack_builder& pack_builder::operator=(pack_builder&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void pack_builder::for_each_object(
     std::function<void(void *object_data, size_t object_size)> visitor) {
   struct visitor_wrapper {

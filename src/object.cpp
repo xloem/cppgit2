@@ -13,6 +13,19 @@ object::~object() {
     git_object_free(c_ptr_);
 }
 
+object::object(object&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+object& object::operator=(object&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 oid object::id() const { return oid(git_object_id(c_ptr_)->id); }
 
 std::string object::short_id() const {
@@ -23,10 +36,12 @@ std::string object::short_id() const {
 }
 
 object object::copy() const {
-  object result(nullptr, ownership::user);
-  if (git_object_dup(&result.c_ptr_, c_ptr_))
+  return *this;
+}
+
+object::object(object const& other) : owner_(ownership::user){
+  if (git_object_dup(&c_ptr_, other.c_ptr_))
     throw git_exception();
-  return result;
 }
 
 std::string object::object_type_to_string(object_type type) {

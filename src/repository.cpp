@@ -10,6 +10,18 @@ repository::~repository() {
     git_repository_free(c_ptr_);
 }
 
+repository::repository(repository&& other) : c_ptr_(other.c_ptr_) {
+  other.c_ptr_ = nullptr;
+}
+
+repository& repository::operator=(repository&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 repository repository::init(const std::string &path, bool is_bare) {
   repository result(nullptr);
   if (git_repository_init(&result.c_ptr_, path.c_str(), is_bare))
@@ -821,7 +833,7 @@ repository::extract_signature_from_commit(oid id,
   if (git_commit_extract_signature(sig.c_ptr(), signed_data.c_ptr(), c_ptr_,
                                    id.c_ptr(), signature_field.c_str()))
     throw git_exception();
-  return std::pair<data_buffer, data_buffer>{sig, signed_data};
+  return std::pair<data_buffer, data_buffer>{std::move(sig), std::move(signed_data)};
 }
 
 commit repository::lookup_commit(const oid &id) const {

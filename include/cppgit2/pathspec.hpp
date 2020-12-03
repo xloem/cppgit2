@@ -20,6 +20,12 @@ public:
   // Cleanup pathspec if needed
   ~pathspec();
 
+  // Move constructor (appropriate other's c_ptr_)
+  pathspec(pathspec&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  pathspec& operator= (pathspec&& other);
+
   enum class flag {
     default_ = 0,
     ignore_case = (1u << 0),

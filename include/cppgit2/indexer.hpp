@@ -19,6 +19,12 @@ public:
   // Free indexer if owned by user
   ~indexer();
 
+  // Move constructor (appropriate other's c_ptr_)
+  indexer(indexer&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  indexer& operator= (indexer&& other);
+
   // This structure is used to provide callers information about the progress of
   // indexing a packfile, either directly or part of a fetch or clone that
   // downloads a packfile.

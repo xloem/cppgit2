@@ -11,6 +11,19 @@ note::~note() {
     git_note_free(c_ptr_);
 }
 
+note::note(note&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+note& note::operator=(note&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 signature note::author() const { return signature(git_note_author(c_ptr_)); }
 
 signature note::committer() const {

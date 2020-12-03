@@ -49,6 +49,19 @@ patch::~patch() {
     git_patch_free(c_ptr_);
 }
 
+patch::patch(patch&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+patch& patch::operator=(patch&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 diff::delta patch::delta() const {
   return diff::delta(git_patch_get_delta(c_ptr_));
 }

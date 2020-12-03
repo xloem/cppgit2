@@ -12,6 +12,19 @@ blame::~blame() {
     git_blame_free(c_ptr_);
 }
 
+blame::blame(blame&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+blame& blame::operator=(blame&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 blame blame::get_blame_for_buffer(const blame &reference,
                                   const std::string &buffer) {
   blame result(nullptr, ownership::user);

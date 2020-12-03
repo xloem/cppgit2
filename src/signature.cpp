@@ -33,10 +33,12 @@ signature::signature(const git_signature *c_ptr) {
 }
 
 signature signature::copy() const {
-  signature result;
-  if (git_signature_dup(&result.c_ptr_, c_ptr_))
+  return *this;
+}
+
+signature::signature(signature const& other) {
+  if (git_signature_dup(&c_ptr_, other.c_ptr_))
     throw git_exception();
-  return result;
 }
 
 std::string signature::name() const {

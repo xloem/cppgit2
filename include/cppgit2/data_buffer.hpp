@@ -23,6 +23,12 @@ public:
   // Dispose internal buffer
   ~data_buffer();
 
+  // Move constructor (appropriate other's c_struct_)
+  data_buffer(data_buffer&& other);
+
+  // Move assignment constructor (appropriate other's c_struct_)
+  data_buffer& operator= (data_buffer&& other);
+
   // Check quickly if buffer contains a NUL byte
   bool contains_nul() const;
 

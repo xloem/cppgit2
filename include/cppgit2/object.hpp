@@ -18,6 +18,12 @@ public:
   // Free git object if owned by user
   ~object();
 
+  // Move constructor (appropriate other's c_ptr_)
+  object(object&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  object& operator= (object&& other);
+
   // SHA1 hash of this object
   oid id() const;
 
@@ -26,6 +32,9 @@ public:
 
   // Clone this object
   object copy() const;
+
+  // Copy constructor
+  object(object const& other);
 
   // Basic type (loose or packed) of any git object
   enum class object_type {
