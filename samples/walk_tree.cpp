@@ -31,6 +31,7 @@ int main(int argc, char **argv) {
                 }
                 std::cout << type_string << " [" << entry.id().to_hex_string(8)
                           << "] " << entry.filename() << std::endl;
+                return 0;
               });
 
   } else {

@@ -1,3 +1,11 @@
+# cppgit2: Koordinates Fork
+
+This fork is maintained by Koordinates for the purposes of implementing [Kart](https://kartproject.org).
+
+This fork is likely to be (somewhat) actively maintained, so someone will respond to issues/PRs.
+
+# cppgit2
+
 <p align="center">
   <img height="100" src="img/logo.png"/>
 </p>
@@ -314,6 +322,7 @@ int main(int argc, char **argv) {
                   }
                   std::cout << type_string << " [" << entry.id().to_hex_string(8)
                             << "] " << entry.filename() << std::endl;
+                  return 0;
               });
 
   } else {

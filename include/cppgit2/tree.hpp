@@ -140,8 +140,10 @@ public:
   class repository owner() const;
 
   // Traverse the entries in a tree and its subtrees in post or pre order.
+  // If the callback returns a positive value, the passed entry will be skipped
+  // on the traversal (in pre mode). A negative value stops the walk.
   void walk(traversal_mode mode,
-            std::function<void(const std::string &, const tree::entry &)>
+            std::function<int(const std::string &, const tree::entry &)>
                 visitor) const;
 
   enum class update_type {
