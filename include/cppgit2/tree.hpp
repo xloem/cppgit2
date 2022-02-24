@@ -35,6 +35,17 @@ public:
     // Default construction
     entry() : c_ptr_(nullptr), owner_(ownership::libgit2) {}
 
+    // copy constructor
+    entry(const entry &e) 
+        : c_ptr_(e.c_ptr_), owner_(e.owner_) {
+
+      if (c_ptr_ && owner_ == ownership::user) {
+        if (git_tree_entry_dup(&c_ptr_, e.c_ptr_)){
+          throw git_exception();
+        }
+      }
+    }
+
     // Construct from libgit2 C ptr
     // If owned by user, will be free'd in destructor
     entry(git_tree_entry *c_ptr, ownership owner = ownership::libgit2)
