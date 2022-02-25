@@ -144,6 +144,15 @@ public:
   // Number of entries in tree
   size_t size() const;
 
+  // get a vector of all tree entries
+  std::vector<entry> entries() {
+    auto result = std::vector<entry>();
+    for (long i=0; i < size() ; i++) {
+      result.push_back(lookup_entry_by_index(i));
+    }
+    return result;
+  }
+
   // Tree traversal modes
   enum class traversal_mode { preorder = 0, postorder = 1 };
 
@@ -211,3 +220,4 @@ private:
 };
 
 } // namespace cppgit2
+ 
