@@ -146,8 +146,9 @@ public:
 
   // get a vector of all tree entries
   std::vector<entry> entries() {
-    auto result = std::vector<entry>();
-    for (long i=0; i < size() ; i++) {
+    auto size_= size();
+    auto result = std::vector<entry>(size_);
+    for (size_t i=0; i < size_ ; i++) {
       result.push_back(lookup_entry_by_index(i));
     }
     return result;
