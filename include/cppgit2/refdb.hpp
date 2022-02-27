@@ -15,7 +15,7 @@ public:
 
   // Construct from C API
   refdb(git_refdb *c_ptr, ownership owner = ownership::libgit2)
-      : c_ptr_(c_ptr), owner_(owner) {}
+      : owner_(owner), c_ptr_(c_ptr) {}
 
   // Free if owned by user
   ~refdb() {

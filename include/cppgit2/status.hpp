@@ -120,10 +120,10 @@ public:
 
   class list : public libgit2_api {
   public:
-    list() : c_ptr_(nullptr), owner_(ownership::libgit2) {}
+    list() : owner_(ownership::libgit2), c_ptr_(nullptr) {}
 
     list(git_status_list *c_ptr, ownership owner = ownership::libgit2)
-        : c_ptr_(c_ptr), owner_(owner) {}
+        : owner_(owner), c_ptr_(c_ptr) {}
 
     ~list() {
       if (c_ptr_ && owner_ == ownership::user)

@@ -38,10 +38,10 @@ public:
 
   class match_list {
   public:
-    match_list() : c_ptr_(nullptr), owner_(ownership::libgit2) {}
+    match_list() : owner_(ownership::libgit2), c_ptr_(nullptr) {}
     match_list(git_pathspec_match_list *c_ptr,
                ownership owner = ownership::libgit2)
-        : c_ptr_(c_ptr), owner_(owner) {}
+        : owner_(owner), c_ptr_(c_ptr) {}
 
     ~match_list() {
       if (c_ptr_ && owner_ == ownership::user)
