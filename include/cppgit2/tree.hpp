@@ -33,7 +33,8 @@ public:
   class entry : public libgit2_api {
   public:
     // Default construction
-    entry() : c_ptr_(nullptr), owner_(ownership::libgit2) {}
+    entry() : c_ptr_(nullptr), owner_(ownership::libgit2) {
+    }
 
     // copy constructor
     entry(const entry &e) 
@@ -49,11 +50,13 @@ public:
     // Construct from libgit2 C ptr
     // If owned by user, will be free'd in destructor
     entry(git_tree_entry *c_ptr, ownership owner = ownership::libgit2)
-        : c_ptr_(c_ptr), owner_(owner) {}
+        : c_ptr_(c_ptr), owner_(owner) {
+        }
 
     entry(const git_tree_entry *c_ptr)
         : c_ptr_(const_cast<git_tree_entry *>(c_ptr)),
-          owner_(ownership::libgit2) {}
+          owner_(ownership::libgit2) {
+          }
 
     // Clean up tree entry
     ~entry() {
@@ -134,7 +137,7 @@ public:
   entry lookup_entry_by_index(size_t index) const;
 
   // Lookup tree entry by its filename
-  // Returned entry is owned by the tree
+  // Returned entry is owned by the tree 
   entry lookup_entry_by_name(const std::string &filename) const;
 
   // Lookup tree entry given its relative path
@@ -143,11 +146,11 @@ public:
 
   // Number of entries in tree
   size_t size() const;
-
+ 
   // get a vector of all tree entries
   std::vector<entry> entries() {
     auto size_= size();
-    auto result = std::vector<entry>(size_);
+    auto result = std::vector<entry>();
     for (size_t i=0; i < size_ ; i++) {
       result.push_back(lookup_entry_by_index(i));
     }
