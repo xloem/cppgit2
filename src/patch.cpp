@@ -133,10 +133,10 @@ size_t patch::size(bool include_context, bool include_hunk_headers,
 }
 
 data_buffer patch::to_buffer() {
-  data_buffer result;
-  if (git_patch_to_buf(result.c_ptr(), c_ptr_))
+  git_buf result = GIT_BUF_INIT;
+  if (git_patch_to_buf(&result, c_ptr_))
     throw git_exception();
-  return result;
+  return data_buffer(&result);
 }
 
 const git_patch *patch::c_ptr() const { return c_ptr_; }

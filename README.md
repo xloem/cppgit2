@@ -870,10 +870,7 @@ virtual const char *what() const throw() { return message_; }
 | --- | --- |
 | `git_buf_contains_nul` |  `data_buffer::contains_nul` |
 | `git_buf_dispose` | `data_buffer::~data_buffer` |
-| `git_buf_free` | `data_buffer::~data_buffer`  |
-| `git_buf_grow` | `data_buffer::grow_to_size` |
 | `git_buf_is_binary` | `data_buffer::is_binary` |
-| `git_buf_set` | `data_buffer::set_buffer` |
 
 ### checkout
 

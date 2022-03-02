@@ -12,7 +12,7 @@ if(LIBGIT2_USE_VENDORED)
 else()
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
-    PKG_CHECK_MODULES(LIBGIT2 libgit2>=0.99)
+    PKG_CHECK_MODULES(LIBGIT2 libgit2>=1.4.0)
   endif()
 endif()
 
