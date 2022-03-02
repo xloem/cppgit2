@@ -73,10 +73,10 @@ remote remote::create_remote(const std::string &url,
 }
 
 data_buffer remote::default_branch() const {
-  data_buffer result;
-  if (git_remote_default_branch(result.c_ptr(), c_ptr_))
+  git_buf result = GIT_BUF_INIT;
+  if (git_remote_default_branch(&result, c_ptr_))
     throw git_exception();
-  return result;
+  return data_buffer(&result);
 }
 
 void remote::disconnect() {

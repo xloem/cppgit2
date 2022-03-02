@@ -133,12 +133,11 @@ void repository::detach_head() const {
 std::string repository::discover_path(const std::string &start_path,
                                       bool across_fs,
                                       const std::string &ceiling_dirs) {
-  // TODO: Update this hardcoded size
-  data_buffer buffer;
-  if (git_repository_discover(buffer.c_ptr(), start_path.c_str(), across_fs,
+  git_buf buffer = GIT_BUF_INIT;
+  if (git_repository_discover(&buffer, start_path.c_str(), across_fs,
                               ceiling_dirs.c_str()))
     throw git_exception();
-  return buffer.to_string();
+  return data_buffer(&buffer).to_string();
 }
 
 std::string repository::discover_path(const std::string &start_path) {
@@ -269,18 +268,19 @@ cppgit2::index repository::index() const {
 }
 
 std::string repository::path(repository::item item) const {
-  data_buffer buffer;
-  if (git_repository_item_path(buffer.c_ptr(), c_ptr_,
+  git_buf buffer = GIT_BUF_INIT;
+  if (git_repository_item_path(&buffer, c_ptr_,
                                static_cast<git_repository_item_t>(item)))
     throw git_exception();
-  return buffer.to_string();
+  return data_buffer(&buffer).to_string();
 }
 
 std::string repository::message() const {
-  data_buffer buffer;
-  if (git_repository_message(buffer.c_ptr(), c_ptr_))
+  git_buf buffer = GIT_BUF_INIT;
+  if (git_repository_message(&buffer, c_ptr_))
     throw git_exception();
-  return buffer.to_string();
+    
+  return data_buffer(&buffer).to_string();
 }
 
 void repository::remove_message() const { git_repository_message_remove(c_ptr_); }
@@ -652,10 +652,10 @@ std::string repository::branch_name(const reference &branch) const {
 }
 
 std::string repository::branch_remote_name(const std::string &refname) const {
-  data_buffer result;
-  if (git_branch_remote_name(result.c_ptr(), c_ptr_, refname.c_str()))
+  git_buf buf = GIT_BUF_INIT;
+  if (git_branch_remote_name(&buf, c_ptr_, refname.c_str()))
     throw git_exception();
-  return result.to_string();
+  return data_buffer(&buf).to_string();
 }
 
 void repository::set_branch_upstream(const reference &ref,
@@ -693,18 +693,18 @@ reference repository::branch_upstream(const std::string &local_branch_name) cons
 }
 
 std::string repository::branch_upstream_name(const std::string &refname) const {
-  data_buffer result;
-  if (git_branch_upstream_name(result.c_ptr(), c_ptr_, refname.c_str()))
+  git_buf buf = GIT_BUF_INIT;
+  if (git_branch_upstream_name(&buf, c_ptr_, refname.c_str()))
     throw git_exception();
-  return result.to_string();
+  return data_buffer(&buf).to_string();
 }
 
 std::string
 repository::branch_upstream_remote(const std::string &refname) const {
-  data_buffer result;
-  if (git_branch_upstream_remote(result.c_ptr(), c_ptr_, refname.c_str()))
+  git_buf buf = GIT_BUF_INIT;
+  if (git_branch_upstream_remote(&buf, c_ptr_, refname.c_str()))
     throw git_exception();
-  return result.to_string();
+  return data_buffer(&buf).to_string();
 }
 
 reference repository::lookup_branch(const std::string &branch_name,
@@ -797,19 +797,19 @@ data_buffer repository::create_commit(const signature &author,
                                       const std::string &message,
                                       const tree &tree,
                                       const std::vector<commit> &parents) const {
-  data_buffer result;
+  git_buf buf = GIT_BUF_INIT;
   const char *message_encoding_c =
       message_encoding == "" ? NULL : message_encoding.c_str();
   std::vector<const git_commit *> parents_c;
   for (auto &p : parents) {
     parents_c.push_back(p.c_ptr());
   }
-  if (git_commit_create_buffer(result.c_ptr(), c_ptr_, author.c_ptr(),
+  if (git_commit_create_buffer(&buf, c_ptr_, author.c_ptr(),
                                committer.c_ptr(), message_encoding_c,
                                message.c_str(), tree.c_ptr(), parents.size(),
                                parents_c.data()))
     throw git_exception();
-  return result;
+  return data_buffer(&buf);
 }
 
 oid repository::create_commit(const std::string &commit_content,
@@ -829,11 +829,11 @@ oid repository::create_commit(const std::string &commit_content,
 std::pair<data_buffer, data_buffer>
 repository::extract_signature_from_commit(oid id,
                                           const std::string &signature_field) const {
-  data_buffer sig, signed_data;
-  if (git_commit_extract_signature(sig.c_ptr(), signed_data.c_ptr(), c_ptr_,
+  git_buf sig, signed_data;
+  if (git_commit_extract_signature(&sig, &signed_data, c_ptr_,
                                    id.c_ptr(), signature_field.c_str()))
     throw git_exception();
-  return std::pair<data_buffer, data_buffer>{std::move(sig), std::move(signed_data)};
+  return std::pair<data_buffer, data_buffer>{std::move(data_buffer(&sig)), std::move(data_buffer(&signed_data))};
 }
 
 commit repository::lookup_commit(const oid &id) const {
@@ -904,12 +904,12 @@ void repository::add_ondisk_config_file(const cppgit2::config &cfg,
 data_buffer repository::create_diff_commit_as_email(
     const commit &commit, size_t patch_no, size_t total_patches,
     diff::format_email_flag flags, const diff::options &options) const {
-  data_buffer result;
-  if (git_diff_commit_as_email(result.c_ptr(), c_ptr_, commit.c_ptr_, patch_no,
+  git_buf buf = GIT_BUF_INIT;
+  if (git_diff_commit_as_email(&buf, c_ptr_, commit.c_ptr_, patch_no,
                                total_patches, static_cast<uint32_t>(flags),
                                options.c_ptr()))
     throw git_exception();
-  return result;
+  return data_buffer(&buf);
 }
 
 diff repository::create_diff_index_to_index(const cppgit2::index &old_index,
@@ -1217,10 +1217,10 @@ oid repository::remove_note(const commit &notes_commit, const signature &author,
 }
 
 data_buffer repository::detault_notes_reference() const {
-  data_buffer result;
-  if (git_note_default_ref(result.c_ptr(), c_ptr_))
+  git_buf buf = GIT_BUF_INIT;
+  if (git_note_default_ref(&buf, c_ptr_))
     throw git_exception();
-  return result;
+  return data_buffer(&buf);
 }
 
 void repository::for_each_note(
@@ -1774,10 +1774,10 @@ submodule repository::lookup_submodule(const std::string &name) const {
 }
 
 data_buffer repository::resolve_submodule_url(const std::string &url) const {
-  data_buffer result;
-  if (git_submodule_resolve_url(result.c_ptr(), c_ptr_, url.c_str()))
+  git_buf buf = GIT_BUF_INIT;
+  if (git_submodule_resolve_url(&buf, c_ptr_, url.c_str()))
     throw git_exception();
-  return result;
+  return data_buffer(&buf);
 }
 
 void repository::set_submodule_branch(const std::string &submodule_name,

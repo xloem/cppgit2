@@ -132,10 +132,10 @@ void pack_builder::write(
 }
 
 data_buffer pack_builder::write_to_buffer() {
-  data_buffer result;
-  if (git_packbuilder_write_buf(result.c_ptr(), c_ptr_))
+  git_buf result = GIT_BUF_INIT;
+  if (git_packbuilder_write_buf(&result, c_ptr_))
     throw git_exception();
-  return result;
+  return data_buffer(&result);
 }
 
 size_t pack_builder::written() const { return git_packbuilder_written(c_ptr_); }

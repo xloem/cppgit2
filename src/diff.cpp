@@ -88,11 +88,11 @@ char diff::status_char(delta::type status) const {
 }
 
 std::string diff::to_string(diff::format format_type) const {
-  // TODO: Check this hardcoded size
-  data_buffer result;
-  if (git_diff_to_buf(result.c_ptr(), c_ptr_,
+  git_buf result_buf = GIT_BUF_INIT;
+  if (git_diff_to_buf(&result_buf, c_ptr_,
                       static_cast<git_diff_format_t>(format_type)))
     throw git_exception();
+  auto result = data_buffer(&result_buf);
   return result.to_string();
 }
 
@@ -106,9 +106,10 @@ diff::stats diff::diff_stats() const {
 }
 
 data_buffer diff::format_email(const format_email_options &options) {
-  data_buffer result;
-  if (git_diff_format_email(result.c_ptr(), c_ptr_, options.c_ptr()))
+  git_buf result_buf = GIT_BUF_INIT;
+  if (git_diff_format_email(&result_buf, c_ptr_, options.c_ptr()))
     throw git_exception();
+  auto result = data_buffer(&result_buf);
   return result;
 }
 
