@@ -114,6 +114,9 @@ public:
   public:
     entry(const git_status_entry *c_ptr) : c_ptr_(c_ptr) {}
 
+    const git_status_entry * c_ptr() {
+      return c_ptr_;
+    }
   private:
     const git_status_entry *c_ptr_;
   };
