@@ -36,6 +36,17 @@ blob::blob(blob const& other) {
   if (git_blob_dup(&c_ptr_, other.c_ptr_))
     throw git_exception();
 }
+blob& blob::operator=(const blob &other) {
+  if (this == &other)
+      return *this;
+
+  if (c_ptr_){
+    git_blob_free(c_ptr_);
+  }
+  if (git_blob_dup(&c_ptr_, const_cast<git_blob *>(other.c_ptr_)))
+    throw git_exception();
+  return *this;
+}
 
 oid blob::id() const { return oid(git_blob_id(c_ptr_)); }
 

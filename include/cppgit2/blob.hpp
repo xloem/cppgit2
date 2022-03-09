@@ -25,7 +25,7 @@ public:
   // Move constructor (appropriate other's c_ptr_)
   blob(blob&& other);
 
-  // Move assignment constructor (appropriate other's c_ptr_)
+  // Move assignment operator (appropriate other's c_ptr_)
   blob& operator= (blob&& other);
 
   // Owner repository
@@ -36,6 +36,9 @@ public:
 
   // Copy constructor
   blob(blob const& other);
+
+  // Copy assignment operator
+  blob &operator=(const blob &other);
 
   // SHA1 hash for this blob
   oid id() const;
