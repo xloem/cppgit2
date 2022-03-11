@@ -19,6 +19,9 @@ object::object(object&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
 
 object& object::operator=(object&& other) {
   if (other.c_ptr_ != c_ptr_) {
+    if (c_ptr_ && owner_ == ownership::user)
+      git_object_free(c_ptr_);
+
     c_ptr_ = other.c_ptr_;
     owner_ = other.owner_;
     other.c_ptr_ = nullptr;
