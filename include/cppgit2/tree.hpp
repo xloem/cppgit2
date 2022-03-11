@@ -46,6 +46,33 @@ public:
         }
       }
     }
+    // copy-assignment operator
+    entry& operator= (const entry& other){
+      if (this == &other) {
+        return *this;
+      }
+      owner_ = ownership::user;
+      if (git_tree_entry_dup(&c_ptr_, other.c_ptr_)){
+        throw git_exception();
+      }
+      return *this;
+    }
+    // move constructor
+    entry(entry &&other) noexcept
+        : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+      other.c_ptr_ = nullptr;
+    }
+    // move-assignment operator
+    entry& operator=(entry&& other) {
+      if (other.c_ptr_ != c_ptr_) {
+        if (c_ptr_ && owner_ == ownership::user)
+          git_tree_entry_free(c_ptr_);
+        c_ptr_ = other.c_ptr_;
+        owner_ = other.owner_;
+        other.c_ptr_ = nullptr;
+      }
+      return *this;
+    }
 
     // Construct from libgit2 C ptr
     // If owned by user, will be free'd in destructor
