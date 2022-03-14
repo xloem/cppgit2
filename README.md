@@ -1,8 +1,6 @@
-# cppgit2: Koordinates Fork
+# Fork no longer maintained.
 
-This fork is maintained by Koordinates for the purposes of implementing [Kart](https://kartproject.org).
-
-This fork is likely to be (somewhat) actively maintained, so someone will respond to issues/PRs.
+This fork is no longer maintained. For a while we thought we needed it, but ended up just using libgit2 directly.
 
 # cppgit2
 
