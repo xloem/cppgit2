@@ -53,6 +53,12 @@ public:
   // Free git_repository ptr
   ~repository();
 
+  // Move constructor (appropriate other's c_ptr_)
+  repository(repository&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  repository& operator= (repository&& other);
+
   // Initialize git repository
   static repository init(const std::string &path, bool is_bare);
 

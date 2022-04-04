@@ -12,13 +12,26 @@ worktree::~worktree() {
     git_worktree_free(c_ptr_);
 }
 
+worktree::worktree(worktree&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+worktree& worktree::operator=(worktree&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 std::pair<bool, std::string> worktree::is_locked() const {
-  data_buffer result;
-  auto ret = git_worktree_is_locked(result.c_ptr(), c_ptr_);
+  git_buf buf = GIT_BUF_INIT;
+  auto ret = git_worktree_is_locked(&buf, c_ptr_);
   if (ret > 0) {
     // Locked
-    if (result.c_ptr()->size) // size > 0 => reason available
-      return std::pair<bool, std::string>{true, result.to_string()};
+    if (buf.size) // size > 0 => reason available
+      return std::pair<bool, std::string>{true, data_buffer(&buf).to_string()};
     else
       return std::pair<bool, std::string>{true, ""};
   } else if (ret == 0) {

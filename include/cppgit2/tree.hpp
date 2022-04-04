@@ -24,19 +24,66 @@ public:
   // Cleanup
   ~tree();
 
+  // Move constructor (appropriate other's c_ptr_)
+  tree(tree&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  tree& operator= (tree&& other);
+
   class entry : public libgit2_api {
   public:
     // Default construction
-    entry() : c_ptr_(nullptr), owner_(ownership::libgit2) {}
+    entry() : c_ptr_(nullptr), owner_(ownership::libgit2) {
+    }
+
+    // copy constructor
+    entry(const entry &e) 
+        : c_ptr_(e.c_ptr_), owner_(e.owner_) {
+
+      if (c_ptr_ && owner_ == ownership::user) {
+        if (git_tree_entry_dup(&c_ptr_, e.c_ptr_)){
+          throw git_exception();
+        }
+      }
+    }
+    // copy-assignment operator
+    entry& operator= (const entry& other){
+      if (this == &other) {
+        return *this;
+      }
+      owner_ = ownership::user;
+      if (git_tree_entry_dup(&c_ptr_, other.c_ptr_)){
+        throw git_exception();
+      }
+      return *this;
+    }
+    // move constructor
+    entry(entry &&other) noexcept
+        : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+      other.c_ptr_ = nullptr;
+    }
+    // move-assignment operator
+    entry& operator=(entry&& other) {
+      if (other.c_ptr_ != c_ptr_) {
+        if (c_ptr_ && owner_ == ownership::user)
+          git_tree_entry_free(c_ptr_);
+        c_ptr_ = other.c_ptr_;
+        owner_ = other.owner_;
+        other.c_ptr_ = nullptr;
+      }
+      return *this;
+    }
 
     // Construct from libgit2 C ptr
     // If owned by user, will be free'd in destructor
     entry(git_tree_entry *c_ptr, ownership owner = ownership::libgit2)
-        : c_ptr_(c_ptr), owner_(owner) {}
+        : c_ptr_(c_ptr), owner_(owner) {
+        }
 
     entry(const git_tree_entry *c_ptr)
         : c_ptr_(const_cast<git_tree_entry *>(c_ptr)),
-          owner_(ownership::libgit2) {}
+          owner_(ownership::libgit2) {
+          }
 
     // Clean up tree entry
     ~entry() {
@@ -104,6 +151,9 @@ public:
   // Duplicate of tree
   tree copy() const;
 
+  // Copy constructor
+  tree(tree const& other);
+
   // Lookup tree entry by SHA value
   // Returned entry is owned by the tree
   // This must examine every entry in the tree, so it's not fast
@@ -114,7 +164,7 @@ public:
   entry lookup_entry_by_index(size_t index) const;
 
   // Lookup tree entry by its filename
-  // Returned entry is owned by the tree
+  // Returned entry is owned by the tree 
   entry lookup_entry_by_name(const std::string &filename) const;
 
   // Lookup tree entry given its relative path
@@ -123,6 +173,16 @@ public:
 
   // Number of entries in tree
   size_t size() const;
+ 
+  // get a vector of all tree entries
+  std::vector<entry> entries() {
+    auto size_= size();
+    auto result = std::vector<entry>();
+    for (size_t i=0; i < size_ ; i++) {
+      result.push_back(lookup_entry_by_index(i));
+    }
+    return result;
+  }
 
   // Tree traversal modes
   enum class traversal_mode { preorder = 0, postorder = 1 };
@@ -131,8 +191,10 @@ public:
   class repository owner() const;
 
   // Traverse the entries in a tree and its subtrees in post or pre order.
+  // If the callback returns a positive value, the passed entry will be skipped
+  // on the traversal (in pre mode). A negative value stops the walk.
   void walk(traversal_mode mode,
-            std::function<void(const std::string &, const tree::entry &)>
+            std::function<int(const std::string &, const tree::entry &)>
                 visitor) const;
 
   enum class update_type {
@@ -189,3 +251,4 @@ private:
 };
 
 } // namespace cppgit2
+ 

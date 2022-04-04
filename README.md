@@ -1,3 +1,9 @@
+# Fork no longer maintained.
+
+This fork is no longer maintained. For a while we thought we needed it, but ended up just using libgit2 directly.
+
+# cppgit2
+
 <p align="center">
   <img height="100" src="img/logo.png"/>
 </p>
@@ -314,6 +320,7 @@ int main(int argc, char **argv) {
                   }
                   std::cout << type_string << " [" << entry.id().to_hex_string(8)
                             << "] " << entry.filename() << std::endl;
+                  return 0;
               });
 
   } else {
@@ -861,10 +868,7 @@ virtual const char *what() const throw() { return message_; }
 | --- | --- |
 | `git_buf_contains_nul` |  `data_buffer::contains_nul` |
 | `git_buf_dispose` | `data_buffer::~data_buffer` |
-| `git_buf_free` | `data_buffer::~data_buffer`  |
-| `git_buf_grow` | `data_buffer::grow_to_size` |
 | `git_buf_is_binary` | `data_buffer::is_binary` |
-| `git_buf_set` | `data_buffer::set_buffer` |
 
 ### checkout
 

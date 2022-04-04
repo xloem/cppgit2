@@ -37,11 +37,30 @@ strarray::~strarray() {
     git_strarray_free(&c_struct_);
 }
 
+strarray::strarray(strarray&& other) {
+  c_struct_.count = other.c_struct_.count;
+  c_struct_.strings = other.c_struct_.strings;
+  other.c_struct_.count = 0;
+  other.c_struct_.strings = nullptr;
+}
+
+strarray& strarray::operator= (strarray&& other) {
+  if (other.c_struct_.strings != c_struct_.strings) {
+    c_struct_.count = other.c_struct_.count;
+    c_struct_.strings = other.c_struct_.strings;
+    other.c_struct_.count = 0;
+    other.c_struct_.strings = nullptr;
+  }
+  return *this;
+}
+
 strarray strarray::copy() const {
-  strarray result;
-  if (git_strarray_copy(&result.c_struct_, &c_struct_))
+  return *this;
+}
+
+strarray::strarray(strarray const& other) {
+  if (git_strarray_copy(&c_struct_, &other.c_struct_))
     throw git_exception();
-  return result;
 }
 
 std::vector<std::string> strarray::to_vector() const {

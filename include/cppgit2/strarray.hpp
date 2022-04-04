@@ -22,8 +22,17 @@ public:
   // Free the git_strarray struct
   ~strarray();
 
+  // Move constructor (appropriate other's c_struct_)
+  strarray(strarray&& other);
+
+  // Move assignment constructor (appropriate other's c_struct_)
+  strarray& operator= (strarray&& other);
+
   // Duplicate this array
   strarray copy() const;
+
+  // Copy constructor
+  strarray(strarray const& other);
 
   // Build vector of tag names from strarray
   std::vector<std::string> to_vector() const;

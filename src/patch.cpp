@@ -49,6 +49,19 @@ patch::~patch() {
     git_patch_free(c_ptr_);
 }
 
+patch::patch(patch&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+patch& patch::operator=(patch&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 diff::delta patch::delta() const {
   return diff::delta(git_patch_get_delta(c_ptr_));
 }
@@ -120,10 +133,10 @@ size_t patch::size(bool include_context, bool include_hunk_headers,
 }
 
 data_buffer patch::to_buffer() {
-  data_buffer result;
-  if (git_patch_to_buf(result.c_ptr(), c_ptr_))
+  git_buf result = GIT_BUF_INIT;
+  if (git_patch_to_buf(&result, c_ptr_))
     throw git_exception();
-  return result;
+  return data_buffer(&result);
 }
 
 const git_patch *patch::c_ptr() const { return c_ptr_; }

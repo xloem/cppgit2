@@ -19,6 +19,12 @@ public:
   // Cleanup refspec object
   ~refspec();
 
+  // Move constructor (appropriate other's c_ptr_)
+  refspec(refspec&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  refspec& operator= (refspec&& other);
+
   // Get the refspec's direction.
   connection_direction direction() const;
 

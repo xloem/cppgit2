@@ -23,6 +23,12 @@ public:
   // Cleanup submodule ptr if owned by user
   ~submodule();
 
+  // Move constructor (appropriate other's c_ptr_)
+  submodule(submodule&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  submodule& operator= (submodule&& other);
+
   // Just like "git submodule init", this copies information about the submodule
   // into ".git/config"
   void init(bool overwrite);

@@ -21,6 +21,12 @@ public:
   // Free reflog if owned by user
   ~reflog();
 
+  // Move constructor (appropriate other's c_ptr_)
+  reflog(reflog&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  reflog& operator= (reflog&& other);
+
   // Entry in this reflog
   class entry : public libgit2_api {
   public:

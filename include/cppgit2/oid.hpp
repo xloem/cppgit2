@@ -41,6 +41,9 @@ public:
   // Copy an oid from one structure to another
   oid copy() const;
 
+  // Copy constructor
+  oid(oid const& other);
+
   // Check if an oid is all zeros
   bool is_zero() const;
 

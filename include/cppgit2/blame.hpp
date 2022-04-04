@@ -20,6 +20,12 @@ public:
   // Free blame object if owned by user
   ~blame();
 
+  // Move constructor (appropriate other's c_ptr_)
+  blame(blame&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  blame& operator= (blame&& other);
+
   // Get blame data for a file that has been modified in memory. The reference
   // parameter is a pre-calculated blame for the in-odb history of the file.
   // This means that once a file blame is completed (which can be expensive),

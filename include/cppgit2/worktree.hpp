@@ -23,6 +23,12 @@ public:
   // Free worktree if owned by user
   ~worktree();
 
+  // Move constructor (appropriate other's c_ptr_)
+  worktree(worktree&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  worktree& operator= (worktree&& other);
+
   // If true, the string holds the reason
   std::pair<bool, std::string> is_locked() const;
 

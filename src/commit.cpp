@@ -12,6 +12,19 @@ commit::~commit() {
     git_commit_free(c_ptr_);
 }
 
+commit::commit(commit&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+commit& commit::operator=(commit&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void commit::amend(const oid &id, const std::string &update_ref,
                    const signature &author, const signature &committer,
                    const std::string &message_encoding,
@@ -41,10 +54,12 @@ signature commit::committer() const {
 }
 
 commit commit::copy() const {
-  commit result(nullptr, ownership::user);
-  if (git_commit_dup(&result.c_ptr_, c_ptr_))
+  return *this;
+}
+
+commit::commit(commit const& other) : owner_(ownership::user){
+  if (git_commit_dup(&c_ptr_, other.c_ptr_))
     throw git_exception();
-  return result;
 }
 
 std::string commit::operator[](const std::string &field) const {

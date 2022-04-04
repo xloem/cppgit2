@@ -15,6 +15,12 @@ public:
   reference(git_reference *c_ptr, ownership owner = ownership::libgit2);
   ~reference();
 
+  // Move constructor (appropriate other's c_ptr_)
+  reference(reference&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  reference& operator= (reference&& other);
+
   // Basic type of any Git reference
   enum class reference_type {
     invalid = 0,  // Invalid reference
@@ -32,6 +38,9 @@ public:
 
   // Create a duplicate of an existing reference
   reference copy() const;
+
+  // Copy constructor
+  reference(reference const& other);
 
   // Check if this reference ...
   bool is_branch() const;

@@ -18,6 +18,12 @@ public:
   // Cleanup
   ~annotated_commit();
 
+  // Move constructor (appropriate other's c_ptr_)
+  annotated_commit(annotated_commit&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  annotated_commit& operator= (annotated_commit&& other);
+
   // Gets the commit ID that the given git_annotated_commit refers to.
   oid id() const;
 

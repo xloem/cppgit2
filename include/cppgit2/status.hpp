@@ -114,16 +114,19 @@ public:
   public:
     entry(const git_status_entry *c_ptr) : c_ptr_(c_ptr) {}
 
+    const git_status_entry * c_ptr() {
+      return c_ptr_;
+    }
   private:
     const git_status_entry *c_ptr_;
   };
 
   class list : public libgit2_api {
   public:
-    list() : c_ptr_(nullptr), owner_(ownership::libgit2) {}
+    list() : owner_(ownership::libgit2), c_ptr_(nullptr) {}
 
     list(git_status_list *c_ptr, ownership owner = ownership::libgit2)
-        : c_ptr_(c_ptr), owner_(owner) {}
+        : owner_(owner), c_ptr_(c_ptr) {}
 
     ~list() {
       if (c_ptr_ && owner_ == ownership::user)

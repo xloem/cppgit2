@@ -13,6 +13,19 @@ odb::~odb() {
     git_odb_free(c_ptr_);
 }
 
+odb::odb(odb&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+odb& odb::operator=(odb&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void odb::add_alternate_backend(const backend &backend, int priority) {
   if (git_odb_add_alternate(c_ptr_, backend.c_ptr_, priority))
     throw git_exception();

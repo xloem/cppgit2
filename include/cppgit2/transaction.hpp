@@ -20,6 +20,12 @@ public:
   // Free transaction if owned by user
   ~transaction();
 
+  // Move constructor (appropriate other's c_ptr_)
+  transaction(transaction&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  transaction& operator= (transaction&& other);
+
   // Commit changes from this transaction
   void commit();
 

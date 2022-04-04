@@ -5,13 +5,15 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Add libgit2
-find_package(PkgConfig)
-if(PkgConfig_FOUND)
-  PKG_CHECK_MODULES(LIBGIT2 libgit2>=0.99)
-endif()
-if(NOT LIBGIT2_FOUND)
+OPTION(LIBGIT2_USE_VENDORED "Use the vendored libgit2, instead of finding the package externally" ON)
+if(LIBGIT2_USE_VENDORED)
   ADD_SUBDIRECTORY(ext/libgit2 ${CMAKE_BINARY_DIR}/lib)
   set(LIBGIT2_INCLUDEDIR ext/libgit2/include)
+else()
+  find_package(PkgConfig)
+  if(PkgConfig_FOUND)
+    PKG_CHECK_MODULES(LIBGIT2 libgit2>=1.4.0)
+  endif()
 endif()
 
 INCLUDE(CMakePackageConfigHelpers)
@@ -46,6 +48,10 @@ if (BUILD_SHARED_LIBS)
 else ()
   ADD_LIBRARY(cppgit2 STATIC $<TARGET_OBJECTS:CPPGIT2_OBJECT_LIBRARY>)
 endif ()
+TARGET_INCLUDE_DIRECTORIES(cppgit2
+  PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/ext/libgit2/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include")
 SET_TARGET_PROPERTIES(cppgit2 PROPERTIES CXX_STANDARD 11)
 TARGET_LINK_LIBRARIES(cppgit2 git2)
 

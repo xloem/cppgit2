@@ -13,6 +13,19 @@ config::~config() {
     git_config_free(c_ptr_);
 }
 
+config::config(config&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+config& config::operator=(config&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void config::delete_entry(const std::string &name) {
   if (git_config_delete_entry(c_ptr_, name.c_str()))
     throw git_exception();

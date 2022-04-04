@@ -18,6 +18,12 @@ public:
   commit(git_commit *c_ptr, ownership owner = ownership::libgit2);
   ~commit();
 
+  // Move constructor (appropriate other's c_ptr_)
+  commit(commit&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  commit& operator= (commit&& other);
+
   // Amend an existing commit by replacing only non-NULL values
   void amend(const oid &id, const std::string &update_ref,
              const signature &author, const signature &committer,
@@ -35,6 +41,9 @@ public:
 
   // Duplicate this commit object
   commit copy() const;
+
+  // Copy constructor
+  commit(commit const& other);
 
   // Get an arbitrary header field
   std::string operator[](const std::string &field) const;

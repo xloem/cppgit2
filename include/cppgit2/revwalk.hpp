@@ -19,6 +19,12 @@ public:
   // Cleanup revwalk
   ~revwalk();
 
+  // Move constructor (appropriate other's c_ptr_)
+  revwalk(revwalk&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  revwalk& operator= (revwalk&& other);
+
   // Adds, changes or removes a callback function to hide a commit and its
   // parents.
   //

@@ -12,6 +12,19 @@ submodule::~submodule() {
     git_submodule_free(c_ptr_);
 }
 
+submodule::submodule(submodule&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+submodule& submodule::operator=(submodule&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void submodule::init(bool overwrite) {
   if (git_submodule_init(c_ptr_, overwrite))
     throw git_exception();

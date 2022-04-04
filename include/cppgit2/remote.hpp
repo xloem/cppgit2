@@ -25,6 +25,12 @@ public:
   // Cleanup remote object
   ~remote();
 
+  // Move constructor (appropriate other's c_ptr_)
+  remote(remote&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  remote& operator= (remote&& other);
+
   // Retrieve the tag auto-follow setting
   fetch::options::autotag autotag_option();
 
@@ -123,6 +129,9 @@ public:
   // All internal strings are also duplicated.
   // Callbacks are not duplicated.
   remote copy() const;
+
+  // Copy constructor
+  remote(remote const& other);
 
   // Create a remote without a connected local repo
   // You can use this when you have a URL instead of a remote's name.

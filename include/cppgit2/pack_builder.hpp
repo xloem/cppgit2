@@ -22,6 +22,12 @@ public:
   // Free packbuilder ptr if owned by user
   ~pack_builder();
 
+  // Move constructor (appropriate other's c_ptr_)
+  pack_builder(pack_builder&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  pack_builder& operator= (pack_builder&& other);
+
   // Create the new pack and pass each object to the callback
   void for_each_object(
       std::function<void(void *object_data, size_t object_size)> visitor);

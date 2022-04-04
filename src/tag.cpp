@@ -10,11 +10,26 @@ tag::~tag() {
     git_tag_free(c_ptr_);
 }
 
+tag::tag(tag&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+tag& tag::operator=(tag&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 tag tag::copy() const {
-  tag result(nullptr, ownership::user);
-  if (git_tag_dup(&result.c_ptr_, c_ptr_))
+  return *this;
+}
+
+tag::tag(tag const& other) : owner_(ownership::user){  
+  if (git_tag_dup(&c_ptr_, other.c_ptr_))
     throw git_exception();
-  return result;
 }
 
 oid tag::id() const { return oid(git_tag_id(c_ptr_)); }

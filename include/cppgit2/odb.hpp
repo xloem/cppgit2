@@ -25,6 +25,12 @@ public:
   // Cleanup odb object if owned by user
   ~odb();
 
+  // Move constructor (appropriate other's c_ptr_)
+  odb(odb&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  odb& operator= (odb&& other);
+
   class backend : public libgit2_api {
   public:
     // Default construct an ODB backend

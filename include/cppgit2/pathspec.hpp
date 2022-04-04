@@ -20,6 +20,12 @@ public:
   // Cleanup pathspec if needed
   ~pathspec();
 
+  // Move constructor (appropriate other's c_ptr_)
+  pathspec(pathspec&& other);
+
+  // Move assignment constructor (appropriate other's c_ptr_)
+  pathspec& operator= (pathspec&& other);
+
   enum class flag {
     default_ = 0,
     ignore_case = (1u << 0),
@@ -32,10 +38,10 @@ public:
 
   class match_list {
   public:
-    match_list() : c_ptr_(nullptr), owner_(ownership::libgit2) {}
+    match_list() : owner_(ownership::libgit2), c_ptr_(nullptr) {}
     match_list(git_pathspec_match_list *c_ptr,
                ownership owner = ownership::libgit2)
-        : c_ptr_(c_ptr), owner_(owner) {}
+        : owner_(owner), c_ptr_(c_ptr) {}
 
     ~match_list() {
       if (c_ptr_ && owner_ == ownership::user)

@@ -13,6 +13,18 @@ tree_builder::~tree_builder() {
     git_treebuilder_free(c_ptr_);
 }
 
+tree_builder::tree_builder(tree_builder&& other) : c_ptr_(other.c_ptr_) {
+  other.c_ptr_ = nullptr;
+}
+
+tree_builder& tree_builder::operator=(tree_builder&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 void tree_builder::clear() { git_treebuilder_clear(c_ptr_); }
 
 void tree_builder::filter(std::function<int(const tree::entry &)> visitor) {

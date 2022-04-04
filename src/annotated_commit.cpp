@@ -13,6 +13,19 @@ annotated_commit::~annotated_commit() {
     git_annotated_commit_free(c_ptr_);
 }
 
+annotated_commit::annotated_commit(annotated_commit&& other) : c_ptr_(other.c_ptr_), owner_(other.owner_) {
+  other.c_ptr_ = nullptr;
+}
+
+annotated_commit& annotated_commit::operator=(annotated_commit&& other) {
+  if (other.c_ptr_ != c_ptr_) {
+    c_ptr_ = other.c_ptr_;
+    owner_ = other.owner_;
+    other.c_ptr_ = nullptr;
+  }
+  return *this;
+}
+
 oid annotated_commit::id() const {
   return oid(git_annotated_commit_id(c_ptr_));
 }

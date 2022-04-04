@@ -2,6 +2,7 @@ build
 .vscode
 .DS_Store
 main
+CMakeFiles
 
 # Prerequisites
 *.d

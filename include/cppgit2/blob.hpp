@@ -22,11 +22,23 @@ public:
   // Free blob with git_blob_free
   ~blob();
 
+  // Move constructor (appropriate other's c_ptr_)
+  blob(blob&& other);
+
+  // Move assignment operator (appropriate other's c_ptr_)
+  blob& operator= (blob&& other);
+
   // Owner repository
   class repository owner() const;
 
   // Create an in-memory copy of a blob
   blob copy() const;
+
+  // Copy constructor
+  blob(blob const& other);
+
+  // Copy assignment operator
+  blob &operator=(const blob &other);
 
   // SHA1 hash for this blob
   oid id() const;
