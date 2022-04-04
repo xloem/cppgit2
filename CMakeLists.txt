@@ -53,7 +53,7 @@ TARGET_INCLUDE_DIRECTORIES(cppgit2
     "${CMAKE_CURRENT_SOURCE_DIR}/ext/libgit2/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/include")
 SET_TARGET_PROPERTIES(cppgit2 PROPERTIES CXX_STANDARD 11)
-TARGET_LINK_LIBRARIES(cppgit2 ${LIBGIT2_LIBRARIES})
+TARGET_LINK_LIBRARIES(cppgit2 ${LIBGIT2_LINK_LIBRARIES})
 
 # Copy include directories to build/include
 FILE(COPY "include" DESTINATION "${CMAKE_BINARY_DIR}/.")
@@ -88,5 +88,4 @@ endif()
 
 install(TARGETS cppgit2 DESTINATION lib)
 file(GLOB HEADER_FILES "include/cppgit2/*")
-message("${HEADER_FILES}")
 install(FILES ${HEADER_FILES} DESTINATION "include/cppgit2")
