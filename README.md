@@ -1,6 +1,3 @@
-# Fork no longer maintained.
-
-This fork is no longer maintained. For a while we thought we needed it, but ended up just using libgit2 directly.
 
 # cppgit2
 
