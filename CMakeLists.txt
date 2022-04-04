@@ -5,10 +5,11 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Add libgit2
-OPTION(LIBGIT2_USE_VENDORED "Use the vendored libgit2, instead of finding the package externally" OFF)
+OPTION(LIBGIT2_USE_VENDORED "Use the vendored libgit2, instead of finding the package externally" ON)
 if(LIBGIT2_USE_VENDORED)
   ADD_SUBDIRECTORY(ext/libgit2 ${CMAKE_BINARY_DIR}/lib)
   set(LIBGIT2_INCLUDEDIR ext/libgit2/include)
+  set(LIBGIT2_LINK_LIBRARIES git2)
 else()
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
