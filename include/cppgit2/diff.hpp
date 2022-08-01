@@ -611,7 +611,7 @@ public:
   // the delta.
   class hunk : public libgit2_api {
   public:
-    hunk(const git_diff_hunk *c_ptr) : c_struct_(*c_ptr) {}
+    hunk(const git_diff_hunk *c_ptr) : c_struct_(c_ptr ? *c_ptr : git_diff_hunk{0}) {}
 
     // Starting line number in old_file
     int old_start() const { return c_struct_.old_start; }
