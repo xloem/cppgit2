@@ -17,7 +17,6 @@ strarray::strarray(const std::vector<std::string> &strings) {
     auto length = strings[i].size() + 1;
     c_struct_.strings[i] = (char *)malloc(length * sizeof(char));
     strncpy(c_struct_.strings[i], strings[i].c_str(), length);
-    c_struct_.strings[i][length] = '\0';
   }
 }
 
