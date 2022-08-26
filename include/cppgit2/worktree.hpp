@@ -87,11 +87,10 @@ public:
   class add_options : public libgit2_api {
   public:
     add_options() : c_ptr_(nullptr) {
-      auto ret = git_worktree_add_init_options(
-          &default_options_, GIT_WORKTREE_ADD_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+        git_worktree_add_init_options(
+            &default_options_, GIT_WORKTREE_ADD_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     add_options(git_worktree_add_options *c_ptr) : c_ptr_(c_ptr) {}
@@ -134,11 +133,10 @@ public:
   // Worktree prune options structure
   class prune_options : public libgit2_api {
     prune_options() : c_ptr_(nullptr) {
-      auto ret = git_worktree_prune_init_options(
-          &default_options_, GIT_WORKTREE_PRUNE_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+        git_worktree_prune_init_options(
+            &default_options_, GIT_WORKTREE_PRUNE_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     prune_options(git_worktree_prune_options *c_ptr) : c_ptr_(c_ptr) {}

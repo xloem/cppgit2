@@ -13,11 +13,9 @@ public:
   class options : public libgit2_api {
   public:
     options() : c_ptr_(nullptr) {
-      auto ret =
-          git_clone_init_options(&default_options_, GIT_CLONE_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+          git_clone_init_options(&default_options_, GIT_CLONE_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     options(git_clone_options *c_ptr) : c_ptr_(c_ptr) {}

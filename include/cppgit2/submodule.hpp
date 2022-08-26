@@ -144,11 +144,10 @@ public:
   class update_options : public libgit2_api {
   public:
     update_options() : c_ptr_(nullptr) {
-      auto ret = git_submodule_update_init_options(
-          &default_options_, GIT_SUBMODULE_UPDATE_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+          git_submodule_update_init_options(
+              &default_options_, GIT_SUBMODULE_UPDATE_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     update_options(git_submodule_update_options *c_ptr) : c_ptr_(c_ptr) {}

@@ -26,41 +26,41 @@ transaction& transaction::operator=(transaction&& other) {
 }
 
 void transaction::commit() {
-  if (git_transaction_commit(c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_transaction_commit(c_ptr_));
 }
 
 void transaction::lock_reference(const std::string &refname) {
-  if (git_transaction_lock_ref(c_ptr_, refname.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_transaction_lock_ref(c_ptr_, refname.c_str()));
 }
 
 void transaction::remove_reference(const std::string &refname) {
-  if (git_transaction_remove(c_ptr_, refname.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_transaction_remove(c_ptr_, refname.c_str()));
 }
 
 void transaction::set_reflog(const std::string &refname, const reflog &reflog) {
-  if (git_transaction_set_reflog(c_ptr_, refname.c_str(), reflog.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_transaction_set_reflog(c_ptr_, refname.c_str(), reflog.c_ptr()));
 }
 
 void transaction::set_symbolic_target(const std::string &refname,
                                       const std::string &target,
                                       const signature &signature,
                                       const std::string &message) {
-  if (git_transaction_set_symbolic_target(c_ptr_, refname.c_str(),
-                                          target.c_str(), signature.c_ptr(),
-                                          message.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_transaction_set_symbolic_target(c_ptr_, refname.c_str(),
+                                        target.c_str(), signature.c_ptr(),
+                                        message.c_str()));
 }
 
 void transaction::set_target(const std::string &refname, const oid &target,
                              const signature &signature,
                              const std::string &message) {
-  if (git_transaction_set_target(c_ptr_, refname.c_str(), target.c_ptr(),
-                                 signature.c_ptr(), message.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_transaction_set_target(c_ptr_, refname.c_str(), target.c_ptr(),
+                               signature.c_ptr(), message.c_str()));
 }
 
 git_transaction *transaction::c_ptr() { return c_ptr_; }

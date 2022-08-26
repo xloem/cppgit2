@@ -14,8 +14,8 @@ public:
 
   std::tuple<int, int, int> version() const {
     int major, minor, revision;
-    if (git_libgit2_version(&major, &minor, &revision))
-      throw git_exception();
+    git_exception::throw_nonzero(
+        git_libgit2_version(&major, &minor, &revision));
     return std::tuple<int, int, int>{major, minor, revision};
   }
 };

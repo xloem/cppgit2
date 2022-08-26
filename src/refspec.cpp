@@ -43,16 +43,16 @@ bool refspec::is_force_update_enabled() const {
 
 refspec refspec::parse(const std::string &input, bool is_fetch) {
   refspec result(nullptr, ownership::user);
-  if (git_refspec_parse(&result.c_ptr_, input.c_str(), is_fetch))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_refspec_parse(&result.c_ptr_, input.c_str(), is_fetch));
   return result;
 }
 
 data_buffer
 refspec::transform_target_to_source_reference(const std::string &name) {
   git_buf result = GIT_BUF_INIT;
-  if (git_refspec_rtransform(&result, c_ptr_, name.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_refspec_rtransform(&result, c_ptr_, name.c_str()));
   return data_buffer(&result);
 }
 
@@ -72,8 +72,8 @@ std::string refspec::to_string() const {
 
 data_buffer refspec::transform_reference(const std::string &name) {
   git_buf result;
-  if (git_refspec_transform(&result, c_ptr_, name.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_refspec_transform(&result, c_ptr_, name.c_str()));
   return data_buffer(&result);
 }
 

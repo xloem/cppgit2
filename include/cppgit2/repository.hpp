@@ -83,11 +83,10 @@ public:
   class init_options : public libgit2_api {
   public:
     init_options() : c_ptr_(nullptr) {
-      auto ret = git_repository_init_options_init(
-          &default_options_, GIT_REPOSITORY_INIT_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+        git_repository_init_options_init(
+            &default_options_, GIT_REPOSITORY_INIT_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     init_options(git_repository_init_options *c_ptr) : c_ptr_(c_ptr) {}

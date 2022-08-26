@@ -117,11 +117,10 @@ public:
   class options : public libgit2_api {
   public:
     options() {
-      auto ret = git_checkout_init_options(&default_options_,
-                                           GIT_CHECKOUT_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+          git_checkout_init_options(&default_options_,
+                                    GIT_CHECKOUT_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     options(git_checkout_options *c_ptr) : c_ptr_(c_ptr) {}

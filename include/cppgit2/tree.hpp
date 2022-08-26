@@ -41,9 +41,8 @@ public:
         : c_ptr_(e.c_ptr_), owner_(e.owner_) {
 
       if (c_ptr_ && owner_ == ownership::user) {
-        if (git_tree_entry_dup(&c_ptr_, e.c_ptr_)){
-          throw git_exception();
-        }
+        git_exception::throw_nonzero(
+          git_tree_entry_dup(&c_ptr_, e.c_ptr_));
       }
     }
     // copy-assignment operator
@@ -52,9 +51,8 @@ public:
         return *this;
       }
       owner_ = ownership::user;
-      if (git_tree_entry_dup(&c_ptr_, other.c_ptr_)){
-        throw git_exception();
-      }
+      git_exception::throw_nonzero(
+        git_tree_entry_dup(&c_ptr_, other.c_ptr_));
       return *this;
     }
     // move constructor
@@ -94,8 +92,8 @@ public:
     // Duplicate a tree entry
     entry copy() const {
       entry result;
-      if (git_tree_entry_dup(&result.c_ptr_, c_ptr_))
-        throw git_exception();
+      git_exception::throw_nonzero(
+        git_tree_entry_dup(&result.c_ptr_, c_ptr_));
       return result;
     }
 

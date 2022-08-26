@@ -38,7 +38,7 @@ std::pair<bool, std::string> worktree::is_locked() const {
     // Not locked
     return std::pair<bool, std::string>{false, ""};
   } else {
-    throw git_exception();
+    throw git_exception(ret);
   }
 }
 
@@ -46,37 +46,25 @@ bool worktree::is_prunable(unsigned int version, uint32_t flags) const {
   git_worktree_prune_options options;
   options.version = version;
   options.flags = flags;
-  auto ret = git_worktree_is_prunable(c_ptr_, &options);
-  if (ret == 1)
-    return true;
-  else if (ret == 0)
-    return false;
-  else
-    throw git_exception();
+  return git_exception::throw_nonbool(
+    git_worktree_is_prunable(c_ptr_, &options));
 }
 
 bool worktree::is_prunable() const {
   git_worktree_prune_options options;
   // Initializes a git_worktree_prune_options with default values. Equivalent to
   // creating an instance with GIT_WORKTREE_PRUNE_OPTIONS_INIT.
-  auto ret = git_worktree_prune_options_init(
-      &options, GIT_WORKTREE_PRUNE_OPTIONS_VERSION);
-  if (ret == 0) {
-    ret = git_worktree_is_prunable(c_ptr_, &options);
-    if (ret == 1)
-      return true;
-    else if (ret == 0)
-      return false;
-    else
-      throw git_exception();
-  } else
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_worktree_prune_options_init(
+        &options, GIT_WORKTREE_PRUNE_OPTIONS_VERSION));
+  return git_exception::throw_nonbool(
+    git_worktree_is_prunable(c_ptr_, &options));
 }
 
 void worktree::lock(const std::string &reason) {
   const char *reason_c = reason.empty() ? nullptr : reason.c_str();
-  if (git_worktree_lock(c_ptr_, reason_c))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_worktree_lock(c_ptr_, reason_c));
 }
 
 std::string worktree::name() const {
@@ -99,26 +87,24 @@ void worktree::prune(unsigned int version, uint32_t flags) {
   git_worktree_prune_options options;
   options.version = version;
   options.flags = flags;
-  if (git_worktree_prune(c_ptr_, &options))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_worktree_prune(c_ptr_, &options));
 }
 
 void worktree::prune() {
   git_worktree_prune_options options;
   // Initializes a git_worktree_prune_options with default values. Equivalent to
   // creating an instance with GIT_WORKTREE_PRUNE_OPTIONS_INIT.
-  auto ret = git_worktree_prune_options_init(
-      &options, GIT_WORKTREE_PRUNE_OPTIONS_VERSION);
-  if (ret == 0) {
-    if (git_worktree_prune(c_ptr_, &options))
-      throw git_exception();
-  } else
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_worktree_prune_options_init(
+        &options, GIT_WORKTREE_PRUNE_OPTIONS_VERSION));
+  git_exception::throw_nonzero(
+    git_worktree_prune(c_ptr_, &options));
 }
 
 void worktree::unlock() {
-  if (git_worktree_unlock(c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_worktree_unlock(c_ptr_));
 }
 
 bool worktree::is_valid() { return git_worktree_validate(c_ptr_) == 0; }

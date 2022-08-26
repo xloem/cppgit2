@@ -41,8 +41,8 @@ void pack_builder::for_each_object(
     return 0;
   };
 
-  if (git_packbuilder_foreach(c_ptr_, callback_c, (void *)(&wrapper)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_packbuilder_foreach(c_ptr_, callback_c, (void *)(&wrapper)));
 }
 
 oid pack_builder::hash() { return oid(git_packbuilder_hash(c_ptr_)); }
@@ -50,32 +50,32 @@ oid pack_builder::hash() { return oid(git_packbuilder_hash(c_ptr_)); }
 oid pack_builder::id() const { return oid(git_packbuilder_hash(c_ptr_)); }
 
 void pack_builder::insert_commit(const oid &commit_id) {
-  if (git_packbuilder_insert_commit(c_ptr_, commit_id.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_packbuilder_insert_commit(c_ptr_, commit_id.c_ptr()));
 }
 
 void pack_builder::insert_object(const oid &commit_id,
                                  const std::string &name) {
   auto name_c = name.empty() ? nullptr : name.c_str();
-  if (git_packbuilder_insert(c_ptr_, commit_id.c_ptr(), name_c))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_packbuilder_insert(c_ptr_, commit_id.c_ptr(), name_c));
 }
 
 void pack_builder::insert_object_recursively(const oid &commit_id,
                                              const std::string &name) {
   auto name_c = name.empty() ? nullptr : name.c_str();
-  if (git_packbuilder_insert_recur(c_ptr_, commit_id.c_ptr(), name_c))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_packbuilder_insert_recur(c_ptr_, commit_id.c_ptr(), name_c));
 }
 
 void pack_builder::insert_tree(const oid &tree_id) {
-  if (git_packbuilder_insert_tree(c_ptr_, tree_id.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_packbuilder_insert_tree(c_ptr_, tree_id.c_ptr()));
 }
 
 void pack_builder::insert_revwalk(const revwalk &walk) {
-  if (git_packbuilder_insert_walk(c_ptr_, walk.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_packbuilder_insert_walk(c_ptr_, walk.c_ptr_));
 }
 
 size_t pack_builder::size() const {
@@ -100,13 +100,13 @@ void pack_builder::set_progress_callback(
     return 0;
   };
 
-  if (git_packbuilder_set_callbacks(c_ptr_, callback_c, (void *)(&wrapper)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_packbuilder_set_callbacks(c_ptr_, callback_c, (void *)(&wrapper)));
 }
 
 void pack_builder::set_threads(unsigned int num_threads) {
-  if (git_packbuilder_set_threads(c_ptr_, num_threads))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_packbuilder_set_threads(c_ptr_, num_threads));
 }
 
 void pack_builder::write(
@@ -126,15 +126,15 @@ void pack_builder::write(
     return 0;
   };
 
-  if (git_packbuilder_write(c_ptr_, path.c_str(), mode, callback_c,
-                            (void *)(&wrapper)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_packbuilder_write(c_ptr_, path.c_str(), mode, callback_c,
+                          (void *)(&wrapper)));
 }
 
 data_buffer pack_builder::write_to_buffer() {
   git_buf result = GIT_BUF_INIT;
-  if (git_packbuilder_write_buf(&result, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_packbuilder_write_buf(&result, c_ptr_));
   return data_buffer(&result);
 }
 

@@ -168,8 +168,8 @@ public:
     // Create a copy of an odb_object
     object copy() const {
       object result(nullptr);
-      if (git_odb_object_dup(&result.c_ptr_, c_ptr_))
-        throw git_exception();
+      git_exception::throw_nonzero(
+          git_odb_object_dup(&result.c_ptr_, c_ptr_));
       return result;
     }
 
@@ -288,24 +288,24 @@ public:
     // the size declared with git_odb_open_wstream()
     oid finalize_write() {
       oid result;
-      if (git_odb_stream_finalize_write(result.c_ptr(), c_ptr_))
-        throw git_exception();
+      git_exception::throw_nonzero(
+          git_odb_stream_finalize_write(result.c_ptr(), c_ptr_));
       return result;
     }
 
     // Read from an odb stream
     // Most backends don't implement streaming reads
     void read(char *buffer, size_t length) {
-      if (git_odb_stream_read(c_ptr_, buffer, length))
-        throw git_exception();
+      git_exception::throw_nonzero(
+          git_odb_stream_read(c_ptr_, buffer, length));
     }
 
     // Write to an odb stream
     // This method will fail if the total number of received bytes exceeds the
     // size declared with git_odb_open_wstream()
     void write(const char *buffer, size_t length) {
-      if (git_odb_stream_write(c_ptr_, buffer, length))
-        throw git_exception();
+      git_exception::throw_nonzero(
+          git_odb_stream_write(c_ptr_, buffer, length));
     }
 
   private:

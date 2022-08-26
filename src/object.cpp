@@ -33,8 +33,8 @@ oid object::id() const { return oid(git_object_id(c_ptr_)->id); }
 
 std::string object::short_id() const {
   git_buf result;
-  if (git_object_short_id(&result, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_object_short_id(&result, c_ptr_));
   return data_buffer(&result).to_string();
 }
 
@@ -43,8 +43,8 @@ object object::copy() const {
 }
 
 object::object(object const& other) : owner_(ownership::user){
-  if (git_object_dup(&c_ptr_, other.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_object_dup(&c_ptr_, other.c_ptr_));
 }
 
 std::string object::object_type_to_string(object_type type) {
@@ -54,9 +54,9 @@ std::string object::object_type_to_string(object_type type) {
 
 object object::peel_until(object_type target_type) {
   object result(nullptr, ownership::user);
-  if (git_object_peel(&result.c_ptr_, c_ptr_,
-                      static_cast<git_object_t>(target_type)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_object_peel(&result.c_ptr_, c_ptr_,
+                    static_cast<git_object_t>(target_type)));
   return result;
 }
 
@@ -88,28 +88,36 @@ blob object::as_blob() {
   if (type() == object::object_type::blob)
     return blob((git_blob *)c_ptr_);
   else
-    throw git_exception("object is not a blob");
+    throw git_exception("object is not a blob",
+                        git_exception::error_class::invalid,
+                        git_exception::error_code::invalid);
 }
 
 commit object::as_commit() {
   if (type() == object::object_type::commit)
     return commit((git_commit *)c_ptr_);
   else
-    throw git_exception("object is not a commit");
+    throw git_exception("object is not a commit",
+                        git_exception::error_class::invalid,
+                        git_exception::error_code::invalid);
 }
 
 tree object::as_tree() {
   if (type() == object::object_type::tree)
     return tree((git_tree *)c_ptr_);
   else
-    throw git_exception("object is not a tree");
+    throw git_exception("object is not a tree",
+                        git_exception::error_class::invalid,
+                        git_exception::error_code::invalid);
 }
 
 tag object::as_tag() {
   if (type() == object::object_type::tag)
     return tag((git_tag *)c_ptr_);
   else
-    throw git_exception("object is not a tag");
+    throw git_exception("object is not a tag",
+                        git_exception::error_class::invalid,
+                        git_exception::error_code::invalid);
 }
 
 } // namespace cppgit2

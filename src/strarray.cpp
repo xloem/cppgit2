@@ -59,8 +59,8 @@ strarray strarray::copy() const {
 }
 
 strarray::strarray(strarray const& other) {
-  if (git_strarray_copy(&c_struct_, &other.c_struct_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_strarray_copy(&c_struct_, &other.c_struct_));
 }
 
 std::vector<std::string> strarray::to_vector() const {

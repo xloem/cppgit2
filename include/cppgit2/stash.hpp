@@ -38,11 +38,10 @@ public:
     class options : public libgit2_api {
     public:
       options() {
-        auto ret = git_stash_apply_init_options(
-            &default_options_, GIT_STASH_APPLY_OPTIONS_VERSION);
+        git_exception::throw_nonzero(
+          git_stash_apply_init_options(
+              &default_options_, GIT_STASH_APPLY_OPTIONS_VERSION));
         c_ptr_ = &default_options_;
-        if (ret != 0)
-          throw git_exception();
       }
 
       options(git_stash_apply_options *c_ptr) : c_ptr_(c_ptr) {}

@@ -2,46 +2,46 @@
 using namespace cppgit2;
 
 credential::credential() {
-  if (git_credential_default_new(&c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_credential_default_new(&c_ptr_));
 }
 
 credential::credential(const std::string &username,
                        const std::string &password) {
-  if (git_credential_userpass_plaintext_new(&c_ptr_, username.c_str(),
-                                            password.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_credential_userpass_plaintext_new(&c_ptr_, username.c_str(),
+                                          password.c_str()));
 }
 
 credential::credential(const std::string &username,
                        const std::string &public_key,
                        const std::string &private_key,
                        const std::string &passphrase) {
-  if (git_credential_ssh_key_new(&c_ptr_, username.c_str(), public_key.c_str(),
-                                 private_key.c_str(), passphrase.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_credential_ssh_key_new(&c_ptr_, username.c_str(), public_key.c_str(),
+                               private_key.c_str(), passphrase.c_str()));
 }
 
 credential::credential(const std::string &username) {
-  if (git_credential_ssh_key_from_agent(&c_ptr_, username.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_credential_ssh_key_from_agent(&c_ptr_, username.c_str()));
 }
 
 credential::credential(const std::string &username,
                        git_credential_ssh_interactive_cb prompt_callback,
                        void *payload) {
-  if (git_credential_ssh_interactive_new(&c_ptr_, username.c_str(),
-                                         prompt_callback, payload))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_credential_ssh_interactive_new(&c_ptr_, username.c_str(),
+                                       prompt_callback, payload));
 }
 
 credential::credential(const std::string &username,
                        const std::string &public_key,
                        git_credential_sign_cb sign_callback, void *payload) {
-  if (git_credential_ssh_custom_new(&c_ptr_, username.c_str(),
-                                    public_key.c_str(), public_key.size(),
-                                    sign_callback, payload))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_credential_ssh_custom_new(&c_ptr_, username.c_str(),
+                                  public_key.c_str(), public_key.size(),
+                                  sign_callback, payload));
 }
 
 credential::~credential() {

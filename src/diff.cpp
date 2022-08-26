@@ -8,8 +8,8 @@ diff::diff() : c_ptr_(nullptr), owner_(ownership::libgit2) {}
 diff::diff(git_diff *c_ptr, ownership owner) : c_ptr_(c_ptr), owner_(owner) {}
 
 diff::diff(const std::string &buffer) {
-  if (git_diff_from_buffer(&c_ptr_, buffer.c_str(), buffer.size()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_from_buffer(&c_ptr_, buffer.c_str(), buffer.size()));
 }
 
 diff::~diff() {
@@ -55,12 +55,11 @@ diff::delta diff::compare_files(const std::pair<blob, std::string> &old_file,
   const char *new_as_path_c =
       new_file.second.empty() ? nullptr : new_file.second.c_str();
 
-  auto ret = git_diff_blobs(old_file.first.c_ptr(), old_as_path_c,
-                            new_file.first.c_ptr(), new_as_path_c,
-                            options.c_ptr_, file_callback, nullptr, nullptr,
-                            nullptr, (void *)(&result));
-  if (ret)
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_blobs(old_file.first.c_ptr(), old_as_path_c,
+                     new_file.first.c_ptr(), new_as_path_c,
+                     options.c_ptr_, file_callback, nullptr, nullptr,
+                     nullptr, (void *)(&result)));
   return result;
 }
 
@@ -73,8 +72,8 @@ bool diff::is_sorted_case_sensitive() const {
 }
 
 void diff::merge(const diff &from) {
-  if (git_diff_merge(c_ptr_, from.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_merge(c_ptr_, from.c_ptr()));
 }
 
 size_t diff::size() const { return git_diff_num_deltas(c_ptr_); }
@@ -89,9 +88,9 @@ char diff::status_char(delta::type status) const {
 
 std::string diff::to_string(diff::format format_type) const {
   git_buf result_buf = GIT_BUF_INIT;
-  if (git_diff_to_buf(&result_buf, c_ptr_,
-                      static_cast<git_diff_format_t>(format_type)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_to_buf(&result_buf, c_ptr_,
+                      static_cast<git_diff_format_t>(format_type)));
   auto result = data_buffer(&result_buf);
   return result.to_string();
 }
@@ -100,15 +99,15 @@ const git_diff *diff::c_ptr() const { return c_ptr_; }
 
 diff::stats diff::diff_stats() const {
   diff::stats result(nullptr);
-  if (git_diff_get_stats(&result.c_ptr_, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_get_stats(&result.c_ptr_, c_ptr_));
   return result;
 }
 
 data_buffer diff::format_email(const format_email_options &options) {
   git_buf result_buf = GIT_BUF_INIT;
-  if (git_diff_format_email(&result_buf, c_ptr_, options.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_format_email(&result_buf, c_ptr_, options.c_ptr()));
   auto result = data_buffer(&result_buf);
   return result;
 }
@@ -171,9 +170,9 @@ void diff::for_each(
     return 0;
   };
 
-  if (git_diff_foreach(c_ptr_, file_callback_c, binary_callback_c,
-                       hunk_callback_c, line_callback_c, (void *)(&wrapper)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_foreach(c_ptr_, file_callback_c, binary_callback_c,
+                       hunk_callback_c, line_callback_c, (void *)(&wrapper)));
 }
 
 void diff::print(diff::format format,
@@ -200,9 +199,9 @@ void diff::print(diff::format format,
     return 0;
   };
 
-  if (git_diff_print(c_ptr_, static_cast<git_diff_format_t>(format),
-                     line_callback_c, (void *)(&wrapper)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_print(c_ptr_, static_cast<git_diff_format_t>(format),
+                     line_callback_c, (void *)(&wrapper)));
 }
 
 void diff::diff_blob_to_buffer(
@@ -266,12 +265,12 @@ void diff::diff_blob_to_buffer(
     return 0;
   };
 
-  if (git_diff_blob_to_buffer(old_blob.c_ptr(), old_as_path.c_str(), new_buffer,
+  git_exception::throw_nonzero(
+      git_diff_blob_to_buffer(old_blob.c_ptr(), old_as_path.c_str(), new_buffer,
                               new_buffer_length, new_as_path.c_str(),
                               options.c_ptr(), file_callback_c,
                               binary_callback_c, hunk_callback_c,
-                              line_callback_c, (void *)(&wrapper)))
-    throw git_exception();
+                              line_callback_c, (void *)(&wrapper)));
 }
 
 void diff::diff_between_buffers(
@@ -336,22 +335,22 @@ void diff::diff_between_buffers(
     return 0;
   };
 
-  if (git_diff_buffers(old_buffer, old_buffer_length, old_as_path.c_str(),
+  git_exception::throw_nonzero(
+      git_diff_buffers(old_buffer, old_buffer_length, old_as_path.c_str(),
                        new_buffer, new_buffer_length, new_as_path.c_str(),
                        options.c_ptr(), file_callback_c, binary_callback_c,
-                       hunk_callback_c, line_callback_c, (void *)(&wrapper)))
-    throw git_exception();
+                       hunk_callback_c, line_callback_c, (void *)(&wrapper)));
 }
 
 void diff::find_similar(const find_options &options) {
-  if (git_diff_find_similar(c_ptr_, options.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_find_similar(c_ptr_, options.c_ptr()));
 }
 
 oid diff::patchid(const patchid_options &options) {
   oid result;
-  if (git_diff_patchid(result.c_ptr(), c_ptr_, options.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+      git_diff_patchid(result.c_ptr(), c_ptr_, options.c_ptr_));
   return result;
 }
 

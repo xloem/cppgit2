@@ -5,8 +5,8 @@ namespace cppgit2 {
 blob::blob() : c_ptr_(nullptr) {}
 
 blob::blob(const git_blob *c_ptr) {
-  if (git_blob_dup(&c_ptr_, const_cast<git_blob *>(c_ptr)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_blob_dup(&c_ptr_, const_cast<git_blob *>(c_ptr)));
 }
 
 blob::~blob() {
@@ -33,8 +33,8 @@ blob blob::copy() const {
 }
 
 blob::blob(blob const& other) {
-  if (git_blob_dup(&c_ptr_, other.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_blob_dup(&c_ptr_, other.c_ptr_));
 }
 blob& blob::operator=(const blob &other) {
   if (this == &other)
@@ -43,8 +43,8 @@ blob& blob::operator=(const blob &other) {
   if (c_ptr_){
     git_blob_free(c_ptr_);
   }
-  if (git_blob_dup(&c_ptr_, const_cast<git_blob *>(other.c_ptr_)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_blob_dup(&c_ptr_, const_cast<git_blob *>(other.c_ptr_)));
   return *this;
 }
 

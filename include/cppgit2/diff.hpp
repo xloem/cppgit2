@@ -135,11 +135,9 @@ public:
   class options : public libgit2_api {
   public:
     options() {
-      auto ret =
-          git_diff_init_options(&default_options_, GIT_DIFF_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+          git_diff_init_options(&default_options_, GIT_DIFF_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     options(git_diff_options *c_ptr) : c_ptr_(c_ptr) {}
@@ -402,10 +400,10 @@ public:
     // Print diff statistics to a git_buf.
     data_buffer to_buffer(format format, size_t width) {
       data_buffer result;
-      if (git_diff_stats_to_buf(result.c_ptr(), c_ptr_,
+      git_exception::throw_nonzero(
+          git_diff_stats_to_buf(result.c_ptr(), c_ptr_,
                                 static_cast<git_diff_stats_format_t>(format),
-                                width))
-        throw git_exception();
+                                width));
       return result;
     }
 
@@ -429,11 +427,10 @@ public:
   class format_email_options : public libgit2_api {
   public:
     format_email_options() : c_ptr_(nullptr) {
-      auto ret = git_diff_format_email_init_options(
-          &default_options_, GIT_DIFF_FORMAT_EMAIL_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+          git_diff_format_email_init_options(
+              &default_options_, GIT_DIFF_FORMAT_EMAIL_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     format_email_options(git_diff_format_email_options *c_ptr)
@@ -777,11 +774,10 @@ public:
   class find_options : public libgit2_api {
   public:
     find_options() : c_ptr_(nullptr) {
-      auto ret = git_diff_find_init_options(&default_options_,
-                                            GIT_DIFF_FIND_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+          git_diff_find_init_options(&default_options_,
+                                     GIT_DIFF_FIND_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     find_options(git_diff_find_options *c_ptr) : c_ptr_(c_ptr) {}
@@ -860,11 +856,10 @@ public:
   class patchid_options : public libgit2_api {
   public:
     patchid_options() : c_ptr_(nullptr) {
-      auto ret = git_diff_patchid_init_options(
-          &default_options_, GIT_DIFF_PATCHID_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+          git_diff_patchid_init_options(
+              &default_options_, GIT_DIFF_PATCHID_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     patchid_options(git_diff_patchid_options *c_ptr) : c_ptr_(c_ptr) {}

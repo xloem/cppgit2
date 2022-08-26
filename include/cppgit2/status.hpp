@@ -43,11 +43,10 @@ public:
   class options : public libgit2_api {
   public:
     options() {
-      auto ret = git_status_init_options(&default_options_,
-                                         GIT_STATUS_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+        git_status_init_options(&default_options_,
+                                GIT_STATUS_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     options(git_status_options *c_ptr) : c_ptr_(c_ptr) {}
