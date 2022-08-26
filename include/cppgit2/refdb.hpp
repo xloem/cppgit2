@@ -27,8 +27,8 @@ public:
   // This mechanism is implementation specific. For on-disk reference
   // databases, for example, this may pack all loose references.
   void compress() {
-    if (git_refdb_compress(c_ptr_))
-      throw git_exception();
+    git_exception::throw_nonzero(
+      git_refdb_compress(c_ptr_));
   }
 
 private:

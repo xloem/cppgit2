@@ -6,13 +6,13 @@ namespace cppgit2 {
 oid::oid() {}
 
 oid::oid(const std::string &hex_string) {
-  if (git_oid_fromstr(&c_struct_, hex_string.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_oid_fromstr(&c_struct_, hex_string.c_str()));
 }
 
 oid::oid(const std::string &hex_string, size_t length) {
-  if (git_oid_fromstrn(&c_struct_, hex_string.c_str(), length))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_oid_fromstrn(&c_struct_, hex_string.c_str(), length));
 }
 
 oid::oid(const git_oid *c_ptr) {
@@ -22,8 +22,8 @@ oid::oid(const git_oid *c_ptr) {
   if (!git_oid_tostr(const_cast<char *>(buffer.c_str()), n + 1, c_ptr))
     throw git_exception();
   // Construct from string
-  if (git_oid_fromstr(&c_struct_, buffer.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_oid_fromstr(&c_struct_, buffer.c_str()));
 }
 
 oid::oid(const unsigned char *raw) { git_oid_fromraw(&c_struct_, raw); }

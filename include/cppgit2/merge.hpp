@@ -76,8 +76,8 @@ public:
       // Initializes a git_merge_file_input with default values. Equivalent to
       // creating an instance with GIT_MERGE_FILE_INPUT_INIT.
       input() {
-        if (git_merge_file_input_init(&c_struct_, GIT_MERGE_FILE_INPUT_VERSION))
-          throw git_exception();
+        git_exception::throw_nonzero(
+            git_merge_file_input_init(&c_struct_, GIT_MERGE_FILE_INPUT_VERSION));
       }
 
       // Construct from libgit2 C ptr
@@ -155,11 +155,10 @@ public:
     class options : public libgit2_api {
     public:
       options() : c_ptr_(nullptr) {
-        auto ret = git_merge_file_init_options(&default_options_,
-                                               GIT_MERGE_FILE_OPTIONS_VERSION);
+        git_exception::throw_nonzero(
+            git_merge_file_init_options(&default_options_,
+                                        GIT_MERGE_FILE_OPTIONS_VERSION));
         c_ptr_ = &default_options_;
-        if (ret != 0)
-          throw git_exception();
       }
 
       options(git_merge_file_options *c_ptr) : c_ptr_(c_ptr) {}
@@ -235,11 +234,9 @@ public:
   class options : public libgit2_api {
   public:
     options() : c_ptr_(nullptr) {
-      auto ret =
-          git_merge_init_options(&default_options_, GIT_MERGE_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+          git_merge_init_options(&default_options_, GIT_MERGE_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     options(git_merge_options *c_ptr) : c_ptr_(c_ptr) {}

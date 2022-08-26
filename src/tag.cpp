@@ -28,8 +28,8 @@ tag tag::copy() const {
 }
 
 tag::tag(tag const& other) : owner_(ownership::user){  
-  if (git_tag_dup(&c_ptr_, other.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_tag_dup(&c_ptr_, other.c_ptr_));
 }
 
 oid tag::id() const { return oid(git_tag_id(c_ptr_)); }
@@ -52,8 +52,8 @@ std::string tag::name() const {
 
 object tag::peel() const {
   object result(nullptr, ownership::user);
-  if (git_tag_peel(&result.c_ptr_, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_tag_peel(&result.c_ptr_, c_ptr_));
   return result;
 }
 
@@ -61,8 +61,8 @@ signature tag::tagger() const { return signature(git_tag_tagger(c_ptr_)); }
 
 object tag::target() const {
   object result(nullptr, ownership::user);
-  if (git_tag_target(&result.c_ptr_, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_tag_target(&result.c_ptr_, c_ptr_));
   return result;
 }
 

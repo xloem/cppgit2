@@ -28,8 +28,8 @@ public:
   public:
     // Default construct apply::options
     options() {
-      if (git_apply_options_init(&default_options_, GIT_APPLY_OPTIONS_VERSION))
-        throw git_exception();
+      git_exception::throw_nonzero(
+          git_apply_options_init(&default_options_, GIT_APPLY_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
     }
 

@@ -29,10 +29,10 @@ void commit::amend(const oid &id, const std::string &update_ref,
                    const signature &author, const signature &committer,
                    const std::string &message_encoding,
                    const std::string &message, const cppgit2::tree &tree) {
-  if (git_commit_amend(const_cast<git_oid *>(id.c_ptr()), c_ptr_,
-                       update_ref.c_str(), author.c_ptr(), committer.c_ptr(),
-                       message_encoding.c_str(), message.c_str(), tree.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+   git_commit_amend(const_cast<git_oid *>(id.c_ptr()), c_ptr_,
+                    update_ref.c_str(), author.c_ptr(), committer.c_ptr(),
+                    message_encoding.c_str(), message.c_str(), tree.c_ptr()));
 }
 
 signature commit::author() const {
@@ -58,14 +58,14 @@ commit commit::copy() const {
 }
 
 commit::commit(commit const& other) : owner_(ownership::user){
-  if (git_commit_dup(&c_ptr_, other.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_commit_dup(&c_ptr_, other.c_ptr_));
 }
 
 std::string commit::operator[](const std::string &field) const {
   data_buffer result(nullptr);
-  if (git_commit_header_field(result.c_ptr(), c_ptr_, field.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_commit_header_field(result.c_ptr(), c_ptr_, field.c_str()));
   return result.to_string();
 }
 
@@ -97,15 +97,15 @@ std::string commit::message_raw() const {
 
 commit commit::ancestor(unsigned long n) const {
   commit result(nullptr, ownership::user);
-  if (git_commit_nth_gen_ancestor(&result.c_ptr_, c_ptr_, n))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_commit_nth_gen_ancestor(&result.c_ptr_, c_ptr_, n));
   return result;
 }
 
 commit commit::parent(const unsigned int n) const {
   commit result(nullptr, ownership::user);
-  if (git_commit_parent(&result.c_ptr_, c_ptr_, n))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_commit_parent(&result.c_ptr_, c_ptr_, n));
   return result;
 }
 
@@ -141,8 +141,8 @@ offset_minutes commit::time_offset() const {
 
 tree commit::tree() const {
   cppgit2::tree result(nullptr, ownership::user);
-  if (git_commit_tree(&result.c_ptr_, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_commit_tree(&result.c_ptr_, c_ptr_));
   return result;
 }
 

@@ -34,13 +34,13 @@ reference reference::copy() const {
 }
 
 reference::reference(reference const& other) : owner_(ownership::user){
-  if (git_reference_dup(&c_ptr_, other.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_reference_dup(&c_ptr_, other.c_ptr_));
 }
 
 void reference::delete_reference(reference &ref) {
-  if (git_reference_delete(ref.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_reference_delete(ref.c_ptr_));
 }
 
 bool reference::is_branch() const { return git_reference_is_branch(c_ptr_); }
@@ -66,9 +66,9 @@ std::string reference::name() const {
 std::string reference::normalize_name(size_t length, const std::string &name,
                                       reference::format flags) {
   char *buffer = (char *)malloc(length * sizeof(char));
-  if (git_reference_normalize_name(buffer, length, name.c_str(),
-                                   static_cast<unsigned int>(flags)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_reference_normalize_name(buffer, length, name.c_str(),
+                                 static_cast<unsigned int>(flags)));
   std::string result{""};
   if (buffer)
     result = std::string(buffer);
@@ -90,42 +90,42 @@ repository reference::owner() const {
 
 object reference::peel_until(object::object_type type) {
   object result(nullptr, ownership::user);
-  if (git_reference_peel(&result.c_ptr_, c_ptr_,
-                         static_cast<git_object_t>(type)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_reference_peel(&result.c_ptr_, c_ptr_,
+                       static_cast<git_object_t>(type)));
   return result;
 }
 
 reference reference::rename(const std::string &new_name, bool force,
                             const std::string &log_message) {
   reference result(nullptr, ownership::user);
-  if (git_reference_rename(&result.c_ptr_, c_ptr_, new_name.c_str(), force,
-                           log_message.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_reference_rename(&result.c_ptr_, c_ptr_, new_name.c_str(), force,
+                         log_message.c_str()));
   return result;
 }
 
 reference reference::resolve() {
   reference result(nullptr, ownership::user);
-  if (git_reference_resolve(&result.c_ptr_, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_reference_resolve(&result.c_ptr_, c_ptr_));
   return result;
 }
 
 reference reference::set_target(const oid &id, const std::string &log_message) {
   reference result(nullptr, ownership::user);
-  if (git_reference_set_target(&result.c_ptr_, c_ptr_, id.c_ptr(),
-                               log_message.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_reference_set_target(&result.c_ptr_, c_ptr_, id.c_ptr(),
+                             log_message.c_str()));
   return result;
 }
 
 reference reference::set_symbolic_target(const std::string &target,
                                          const std::string &log_message) {
   reference result(nullptr, ownership::user);
-  if (git_reference_symbolic_set_target(&result.c_ptr_, c_ptr_, target.c_str(),
-                                        log_message.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_reference_symbolic_set_target(&result.c_ptr_, c_ptr_, target.c_str(),
+                                      log_message.c_str()));
   return result;
 }
 

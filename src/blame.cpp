@@ -28,10 +28,10 @@ blame& blame::operator=(blame&& other) {
 blame blame::get_blame_for_buffer(const blame &reference,
                                   const std::string &buffer) {
   blame result(nullptr, ownership::user);
-  if (git_blame_buffer(&result.c_ptr_,
-                       const_cast<git_blame *>(reference.c_ptr()),
-                       buffer.c_str(), buffer.size()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_blame_buffer(&result.c_ptr_,
+                     const_cast<git_blame *>(reference.c_ptr()),
+                     buffer.c_str(), buffer.size()));
   return result;
 }
 

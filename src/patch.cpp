@@ -11,20 +11,20 @@ patch::patch(const blob &old_blob, const std::string &old_as_path,
              const void *buffer, size_t buffer_length,
              const std::string &buffer_as_path, const diff::options &options) {
   owner_ = ownership::user;
-  if (git_patch_from_blob_and_buffer(&c_ptr_, old_blob.c_ptr(),
-                                     old_as_path.c_str(), buffer, buffer_length,
-                                     buffer_as_path.c_str(), options.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_patch_from_blob_and_buffer(&c_ptr_, old_blob.c_ptr(),
+                                   old_as_path.c_str(), buffer, buffer_length,
+                                   buffer_as_path.c_str(), options.c_ptr()));
 }
 
 patch::patch(const blob &old_blob, const std::string &old_as_path,
              const blob &new_blob, const std::string &new_as_path,
              const diff::options &options) {
   owner_ = ownership::user;
-  if (git_patch_from_blobs(&c_ptr_, old_blob.c_ptr(), old_as_path.c_str(),
-                           new_blob.c_ptr(), new_as_path.c_str(),
-                           options.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_patch_from_blobs(&c_ptr_, old_blob.c_ptr(), old_as_path.c_str(),
+                         new_blob.c_ptr(), new_as_path.c_str(),
+                         options.c_ptr()));
 }
 
 patch::patch(const void *old_buffer, size_t old_buffer_length,
@@ -32,16 +32,16 @@ patch::patch(const void *old_buffer, size_t old_buffer_length,
              size_t new_buffer_length, const std::string &new_as_path,
              const diff::options &options) {
   owner_ = ownership::user;
-  if (git_patch_from_buffers(&c_ptr_, old_buffer, old_buffer_length,
-                             old_as_path.c_str(), new_buffer, new_buffer_length,
-                             new_as_path.c_str(), options.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_patch_from_buffers(&c_ptr_, old_buffer, old_buffer_length,
+                           old_as_path.c_str(), new_buffer, new_buffer_length,
+                           new_as_path.c_str(), options.c_ptr()));
 }
 
 patch::patch(const diff &diff, size_t index) {
   owner_ = ownership::user;
-  if (git_patch_from_diff(&c_ptr_, diff.c_ptr_, index))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_patch_from_diff(&c_ptr_, diff.c_ptr_, index));
 }
 
 patch::~patch() {
@@ -70,24 +70,24 @@ std::pair<diff::hunk, size_t> patch::hunk(size_t hunk_index) const {
   diff::hunk hunk_result(nullptr);
   auto hunk_result_ptr = hunk_result.c_ptr();
   size_t lines_in_hunk;
-  if (git_patch_get_hunk(&hunk_result_ptr, &lines_in_hunk, c_ptr_, hunk_index))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_patch_get_hunk(&hunk_result_ptr, &lines_in_hunk, c_ptr_, hunk_index));
   return std::pair<diff::hunk, size_t>{hunk_result, lines_in_hunk};
 }
 
 diff::line patch::line_in_hunk(size_t hunk_index, size_t line_of_hunk) const {
   diff::line result(nullptr);
   auto result_ptr = result.c_ptr();
-  if (git_patch_get_line_in_hunk(&result_ptr, c_ptr_, hunk_index, line_of_hunk))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_patch_get_line_in_hunk(&result_ptr, c_ptr_, hunk_index, line_of_hunk));
   return result;
 }
 
 std::tuple<size_t, size_t, size_t> patch::line_stats() const {
   size_t context_lines = 0, addition_lines = 0, deletion_lines = 0;
-  if (git_patch_line_stats(&context_lines, &addition_lines, &deletion_lines,
-                           c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_patch_line_stats(&context_lines, &addition_lines, &deletion_lines,
+                         c_ptr_));
   return std::tuple<size_t, size_t, size_t>{context_lines, addition_lines,
                                             deletion_lines};
 }
@@ -122,8 +122,8 @@ void patch::print(std::function<void(const diff::delta &, const diff::hunk &,
     return 0;
   };
 
-  if (git_patch_print(c_ptr_, line_callback_c, (void *)(&wrapper)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_patch_print(c_ptr_, line_callback_c, (void *)(&wrapper)));
 }
 
 size_t patch::size(bool include_context, bool include_hunk_headers,
@@ -134,8 +134,8 @@ size_t patch::size(bool include_context, bool include_hunk_headers,
 
 data_buffer patch::to_buffer() {
   git_buf result = GIT_BUF_INIT;
-  if (git_patch_to_buf(&result, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_patch_to_buf(&result, c_ptr_));
   return data_buffer(&result);
 }
 

@@ -41,11 +41,10 @@ public:
   class callbacks : public libgit2_api {
   public:
     callbacks() : c_ptr_(nullptr) {
-      auto ret = git_remote_init_callbacks(&default_options_,
-                                           GIT_REMOTE_CALLBACKS_VERSION);
+      git_exception::throw_nonzero(
+        git_remote_init_callbacks(&default_options_,
+                                  GIT_REMOTE_CALLBACKS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     callbacks(git_remote_callbacks *c_ptr) : c_ptr_(c_ptr) {}
@@ -78,11 +77,10 @@ public:
   class create_options : public libgit2_api {
   public:
     create_options() : c_ptr_(nullptr) {
-      auto ret = git_remote_create_init_options(
-          &default_options_, GIT_REMOTE_CREATE_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+        git_remote_create_init_options(
+            &default_options_, GIT_REMOTE_CREATE_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     create_options(git_remote_create_options *c_ptr) : c_ptr_(c_ptr) {}

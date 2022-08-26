@@ -43,8 +43,8 @@ tree::entry tree::lookup_entry_by_name(const std::string &filename) const {
 tree::entry tree::lookup_entry_by_path(const std::string &path) const {
   tree::entry result(nullptr, ownership::user);
   result.owner_ = ownership::user;
-  if (git_tree_entry_bypath(&result.c_ptr_, c_ptr_, path.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_tree_entry_bypath(&result.c_ptr_, c_ptr_, path.c_str()));
   return result;
 }
 
@@ -55,8 +55,8 @@ tree tree::copy() const {
 }
 
 tree::tree(tree const& other) : owner_(ownership::user){
-  if (git_tree_dup(&c_ptr_, other.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_tree_dup(&c_ptr_, other.c_ptr_));
 }
 
 size_t tree::size() const { return git_tree_entrycount(c_ptr_); }
@@ -79,9 +79,9 @@ void tree::walk(traversal_mode mode,
     return wrapper->fn(root ? std::string(root) : "", tree::entry(entry));
   };
 
-  if (git_tree_walk(c_ptr_, static_cast<git_treewalk_mode>(mode), callback_c,
-                    (void *)(&wrapper)))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_tree_walk(c_ptr_, static_cast<git_treewalk_mode>(mode), callback_c,
+                  (void *)(&wrapper)));
 }
 
 git_tree *tree::c_ptr() { return c_ptr_; }

@@ -11,11 +11,10 @@ public:
   class options : public libgit2_api {
   public:
     options() : c_ptr_(nullptr) {
-      auto ret = git_cherrypick_init_options(&default_options_,
-                                             GIT_CHERRYPICK_OPTIONS_VERSION);
+      git_exception::throw_nonzero(
+        git_cherrypick_init_options(&default_options_,
+                                    GIT_CHERRYPICK_OPTIONS_VERSION));
       c_ptr_ = &default_options_;
-      if (ret != 0)
-        throw git_exception();
     }
 
     options(git_cherrypick_options *c_ptr) : c_ptr_(c_ptr) {}

@@ -26,18 +26,18 @@ submodule& submodule::operator=(submodule&& other) {
 }
 
 void submodule::init(bool overwrite) {
-  if (git_submodule_init(c_ptr_, overwrite))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_init(c_ptr_, overwrite));
 }
 
 void submodule::resolve_setup() {
-  if (git_submodule_add_finalize(c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_add_finalize(c_ptr_));
 }
 
 void submodule::add_to_index(bool write_index) {
-  if (git_submodule_add_to_index(c_ptr_, write_index))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_add_to_index(c_ptr_, write_index));
 }
 
 std::string submodule::branch_name() const {
@@ -61,8 +61,8 @@ submodule::ignore submodule::ignore_option() const {
 
 repository submodule::initialize_repository(bool use_gitlink) {
   repository result;
-  if (git_submodule_repo_init(&result.c_ptr_, c_ptr_, use_gitlink))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_repo_init(&result.c_ptr_, c_ptr_, use_gitlink));
   return result;
 }
 
@@ -90,14 +90,14 @@ std::string submodule::path() const {
 }
 
 void submodule::reload(bool force) {
-  if (git_submodule_reload(c_ptr_, force))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_reload(c_ptr_, force));
 }
 
 cppgit2::repository submodule::open_repository() {
   cppgit2::repository result;
-  if (git_submodule_open(&result.c_ptr_, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_open(&result.c_ptr_, c_ptr_));
   return result;
 }
 
@@ -106,8 +106,8 @@ cppgit2::repository submodule::owner() {
 }
 
 void submodule::sync() {
-  if (git_submodule_sync(c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_sync(c_ptr_));
 }
 
 std::string submodule::url() const {
@@ -120,21 +120,21 @@ std::string submodule::url() const {
 
 submodule::status submodule::location_status() const {
   unsigned int result;
-  if (git_submodule_location(&result, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_location(&result, c_ptr_));
   return static_cast<submodule::status>(result);
 }
 
 repository submodule::clone(const update_options &options) {
   repository result;
-  if (git_submodule_clone(&result.c_ptr_, c_ptr_, options.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_clone(&result.c_ptr_, c_ptr_, options.c_ptr_));
   return result;
 }
 
 void submodule::update(bool init, const update_options &options) {
-  if (git_submodule_update(c_ptr_, init, options.c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_submodule_update(c_ptr_, init, options.c_ptr_));
 }
 
 const git_submodule *submodule::c_ptr() const { return c_ptr_; }

@@ -25,37 +25,37 @@ rebase& rebase::operator=(rebase&& other) {
 }
 
 void rebase::abort() {
-  if (git_rebase_abort(c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_rebase_abort(c_ptr_));
 }
 
 oid rebase::commit(const signature &author, const signature &committer,
                    const std::string &message_encoding,
                    const std::string &message) {
   oid result;
-  if (git_rebase_commit(result.c_ptr(), c_ptr_, author.c_ptr(),
-                        committer.c_ptr(), message_encoding.c_str(),
-                        message.c_str()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_rebase_commit(result.c_ptr(), c_ptr_, author.c_ptr(),
+                      committer.c_ptr(), message_encoding.c_str(),
+                      message.c_str()));
   return result;
 }
 
 void rebase::finish(const signature &sig) {
-  if (git_rebase_finish(c_ptr_, sig.c_ptr()))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_rebase_finish(c_ptr_, sig.c_ptr()));
 }
 
 cppgit2::index rebase::index() {
   cppgit2::index result(nullptr, ownership::user);
-  if (git_rebase_inmemory_index(&result.c_ptr_, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_rebase_inmemory_index(&result.c_ptr_, c_ptr_));
   return result;
 }
 
 rebase::operation rebase::next() {
   operation result;
-  if (git_rebase_next(&result.c_ptr_, c_ptr_))
-    throw git_exception();
+  git_exception::throw_nonzero(
+    git_rebase_next(&result.c_ptr_, c_ptr_));
   return result;
 }
 
